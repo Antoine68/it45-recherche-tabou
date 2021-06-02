@@ -17,6 +17,9 @@ class Formation
     protected:
 
     private:
+        int id;
+        int competance[2];
+        
        
 };
 

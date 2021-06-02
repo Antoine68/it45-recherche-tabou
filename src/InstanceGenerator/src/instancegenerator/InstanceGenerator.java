@@ -29,7 +29,7 @@ public class InstanceGenerator {
     public static int NBR_INTERFACES = (int) (NBR_APPRENANTS/4 * 1.2);
     public static int NBR_FORMATIONS = NBR_APPRENANTS * NBR_FORMATIONS_PAR_SEMAINE;
 
-    public static String FILENAME = "instance-" + NBR_FORMATIONS + "formations.c";
+    public static String FILENAME = "../../include/Donnee.hpp";
 
     public static int NBR_COMPETENCES = 2;
     public static String NOMS_COMPETENCES[] = {
@@ -67,7 +67,7 @@ public class InstanceGenerator {
             writeSpecialiteInterfaces();
             writeCoord();
             writeFormation();
-            writeMain();
+            //writeMain();
 
             textFileOutput.close();
         } catch (IOException ex) {
@@ -88,6 +88,8 @@ public class InstanceGenerator {
     //#define COMPETENCE_CODAGE      1 
     private void writeHeader() {
         try {
+            textFileOutput.write("#ifndef DONNEE_H\n");
+            textFileOutput.write("#define DONNEE_H\n\n\n");
             textFileOutput.write("#include <stdio.h>\n");
             textFileOutput.write("                  \n");
             textFileOutput.write("#define NBR_INTERFACES        " + NBR_INTERFACES + "\n");
@@ -355,6 +357,7 @@ public class InstanceGenerator {
             }
 
             textFileOutput.write("                  \n");
+            textFileOutput.write("#endif //DONNEES\n");
         } catch (IOException ex) {
             Logger.getLogger(InstanceGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }

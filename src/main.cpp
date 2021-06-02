@@ -6,14 +6,17 @@
 #include "../include/Random.hpp"
 #include "../include/RechercheTabou.hpp"
 #include "../include/Solution.hpp"
+#include "../include/Donnee.hpp"
 
 using namespace std;
 
 int main(int argc, char **argv)
 
 {
+
+    Random::randomize();
 	
-    cout << "affectation" << endl;
+    cout << VENDREDI << endl;
 
 	return 0;
 }
