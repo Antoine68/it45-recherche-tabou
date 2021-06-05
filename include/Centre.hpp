@@ -17,6 +17,8 @@ class Centre
         int getId();
         float* getCoordonnees();
         int getSpecialite();
+        float getCoordonneeX();
+        float getCoordonneeY();
        
 
     protected:

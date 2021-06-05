@@ -4,8 +4,12 @@
 Interface::Interface(int id, int competances[2], int specialites[NBR_SPECIALITES])
 {
     this->m_id = id;
-    memcpy(&competances, this->m_competances, 2);
-    memcpy(&specialites, this->m_specialites, NBR_SPECIALITES*sizeof(int));
+    for(int i=0; i<2; i++) {
+        this->m_competances[i] = competances[i];
+    }
+    for(int i=0; i<NBR_SPECIALITES; i++) {
+        this->m_competances[i] = specialites[i];
+    }
 
 }
 

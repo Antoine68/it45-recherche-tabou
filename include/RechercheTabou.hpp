@@ -7,10 +7,12 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cmath> 
 #include "Formation.hpp"
 #include "Interface.hpp"
 #include "Solution.hpp"
 #include "Centre.hpp"
+#include "Donnee.hpp"
 
 
 class RechercheTabou
@@ -19,7 +21,7 @@ class RechercheTabou
         RechercheTabou(std::vector<Formation>& formations, std::vector<Interface>& interfaces, std::vector<Centre>& centres, 
                        int dureeTabou, int longueurTabou, int nbIterationAvantDiversification, int dureeRecherche);
         virtual ~RechercheTabou();
-        Solution& rechercher();
+        Solution* rechercher();
 
 
     protected:
@@ -36,17 +38,20 @@ class RechercheTabou
        int m_iterationActuelle;
        Solution* m_solutionActuelle;
        Solution* m_meilleureSolution;
-       int** distances;
+       float m_distances[NBR_CENTRES_FORMATION+1][NBR_CENTRES_FORMATION+1];
 
        Formation* getFormationById(int id);
        int getFormationIndexById(int id);
        Interface* getInterfaceById(int id);
        int getInterfaceIndexById(int id);
+       Centre* getCentreById(int id);
+       int getCentreIndexById(int id);
        void calculerDistances();
        int getDistanceEntreCentres(int id1, int id2);
        Centre* getFormationCentre(int idFormation);
        bool deplacementEstTabou(int id1, int id2);
        
+       void glouton();
        void voisinage();
 
 };

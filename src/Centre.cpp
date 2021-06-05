@@ -3,9 +3,12 @@
 
 Centre::Centre(int id, float coordonnees[2], int specialite)
 {
+   
     this->m_id = id;
-    memcpy(&coordonnees, this->m_coordonnees, 2);
     this->m_specialite = specialite;
+    for(int i=0; i<2; i++) {
+        this->m_coordonnees[i] = coordonnees[i];
+    }
     
 }
 
@@ -26,4 +29,11 @@ int Centre::getSpecialite() {
     return this->m_specialite;
 }
 
+float Centre::getCoordonneeX() {
+    return this->m_coordonnees[0];
+}
+
+float Centre::getCoordonneeY() {
+    return this->m_coordonnees[1];
+}
 

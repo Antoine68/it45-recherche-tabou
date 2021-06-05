@@ -13,6 +13,9 @@ RechercheTabou::RechercheTabou(std::vector<Formation>& formations, std::vector<I
     this->m_dureeRecherche = dureeRecherche;
     this->m_solutionActuelle = new Solution();
 
+    this->calculerDistances();
+    this->glouton();
+
 }
 
 RechercheTabou::~RechercheTabou()
@@ -20,13 +23,48 @@ RechercheTabou::~RechercheTabou()
 
 }
 
-Solution& RechercheTabou::rechercher() {
-    return *this->m_meilleureSolution;
+Solution* RechercheTabou::rechercher() {
+    return this->m_meilleureSolution;
 }
 
 void RechercheTabou::voisinage() {
 
 }
+
+void RechercheTabou::glouton() {
+
+}
+
+void RechercheTabou::calculerDistances() {
+    Centre* centre1;
+    Centre* centre2;
+    for (int i = 0; i < NBR_CENTRES_FORMATION+1; i++)
+    {
+        for (int j = 0; j < NBR_CENTRES_FORMATION+1; j++) {
+            if (i == j) {
+                this->m_distances[i][j] = 0;
+            } else {
+                centre1 = this->getCentreById(i);
+                centre2 = this->getCentreById(j);
+                this->m_distances[i][j] = 
+                    sqrtf(powf((centre2->getCoordonneeX() - centre1->getCoordonneeX()),2) 
+                                + powf((centre2->getCoordonneeY() - centre1->getCoordonneeY()),2));
+               
+            }
+            std::cout << i << " " << j << " " << this->m_distances[i][j] << std::endl;
+        }
+    }
+    
+    
+}
+
+bool RechercheTabou::deplacementEstTabou(int id1, int id2) 
+{
+    return false;
+}
+
+
+
 
 Formation* RechercheTabou::getFormationById(int id) 
 {
@@ -67,13 +105,23 @@ int RechercheTabou::getInterfaceIndexById(int id)
     return -1;
 }
 
-
-
-void RechercheTabou::calculerDistances() {
-
-}
-
-bool RechercheTabou::deplacementEstTabou(int id1, int id2) 
+Centre* RechercheTabou::getCentreById(int id) 
 {
-    return false;
+    for (size_t i = 0; i < this->m_centres.size(); i++)
+    {
+        if (this->m_centres[i].getId() == id) return &this->m_centres[i];
+    }
+    return nullptr;
 }
+
+int RechercheTabou::getCentreIndexById(int id) 
+{
+    for (size_t i = 0; i < this->m_centres.size(); i++)
+    {
+        if (this->m_centres[i].getId() == id) return i;
+    }
+    return -1;
+}
+
+
+

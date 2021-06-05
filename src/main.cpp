@@ -20,9 +20,11 @@ int main(int argc, char **argv)
 {
 
     Random::randomize();
+
     std::vector<Formation> formations;
     std::vector<Interface> interfaces;
     std::vector<Centre> centres;
+    
     
     for (size_t i = 0; i < NBR_INTERFACES; i++)
     {
@@ -37,6 +39,10 @@ int main(int argc, char **argv)
         formations.push_back(*(new Formation(f[0], f[1], f[2], f[3], f[4], f[5])));
     }
     
+    RechercheTabou tabou(formations, interfaces, centres, 1, 1, 1, 1);
+
+    Solution* meilleure = tabou.rechercher();
+
 
     
 	
