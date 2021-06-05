@@ -2,7 +2,7 @@
 
 void Random::randomize()
 {
-    srand (time(NULL));
+    srand(time(NULL));
 };
 
 

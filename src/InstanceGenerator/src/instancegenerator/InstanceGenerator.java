@@ -30,6 +30,7 @@ public class InstanceGenerator {
     public static int NBR_FORMATIONS = NBR_APPRENANTS * NBR_FORMATIONS_PAR_SEMAINE;
 
     public static String FILENAME = "../../include/Donnee.hpp";
+    public static String FILENAME1 = "../Donnee.cpp";
 
     public static int NBR_COMPETENCES = 2;
     public static String NOMS_COMPETENCES[] = {
@@ -54,6 +55,7 @@ public class InstanceGenerator {
         "SAMEDI"};
 
     protected BufferedWriter textFileOutput;
+    protected BufferedWriter textFileOutput1;
 
     Random rand;
 
@@ -61,8 +63,10 @@ public class InstanceGenerator {
         rand = new Random();
         try {
             textFileOutput = new BufferedWriter(new FileWriter(FILENAME));
+            textFileOutput1 = new BufferedWriter(new FileWriter(FILENAME1));
 
             writeHeader();
+
             writeCompetencesInterfaces();
             writeSpecialiteInterfaces();
             writeCoord();
@@ -70,6 +74,7 @@ public class InstanceGenerator {
             //writeMain();
 
             textFileOutput.close();
+            textFileOutput1.close();
         } catch (IOException ex) {
             Logger.getLogger(InstanceGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -102,6 +107,26 @@ public class InstanceGenerator {
             textFileOutput.write("/* code des compétence en langage des signes et en codage LPC */\n");
             textFileOutput.write("#define COMPETENCE_SIGNES     0\n");
             textFileOutput.write("#define COMPETENCE_CODAGE     1\n");
+
+            textFileOutput.write("#define SPECIALITE_SANS       -1 /* Enseigné dans le centre le plus proche */\n");
+            for (int i=0;i<NOMS_SPECIALITES.length;i++) {
+                textFileOutput.write("#define "+NOMS_SPECIALITES[i]+" "+i+"\n");
+            }
+
+            textFileOutput.write("#define NBR_FORMATION          " + NBR_FORMATIONS + "\n");
+            textFileOutput.write("                  \n");
+            textFileOutput.write("#define LUNDI                  1\n");
+            textFileOutput.write("#define MARDI                  2\n");
+            textFileOutput.write("#define MERCREDI               3\n");
+            textFileOutput.write("#define JEUDI                  4\n");
+            textFileOutput.write("#define VENDREDI               5\n");
+            textFileOutput.write("#define SAMEDI                 6\n");
+            textFileOutput.write("                  \n");
+
+            textFileOutput.write("extern int competences_interfaces[NBR_INTERFACES][2];\n");
+            textFileOutput.write("extern int specialite_interfaces[NBR_INTERFACES][NBR_SPECIALITES];\n");
+            textFileOutput.write("extern float coord[NBR_NODES][2];\n");
+            textFileOutput.write("extern int formation[NBR_FORMATION][6];\n");
             textFileOutput.write("                  \n");
         } catch (IOException ex) {
             Logger.getLogger(InstanceGenerator.class.getName()).log(Level.SEVERE, null, ex);
@@ -124,24 +149,25 @@ public class InstanceGenerator {
     //};
     private void writeCompetencesInterfaces() {
         try {
-            textFileOutput.write("/* competences des interfaces en SIGNES et CODAGE*/\n");
-            textFileOutput.write("int competences_interfaces[NBR_INTERFACES][2]={\n");
-            textFileOutput.write("    {1,0}, /* compétence en langages des SIGNES mais pas en CODAGE LPC */\n");
-            textFileOutput.write("    {0,1}, /* pas de compétence en langages des SIGNES mais compétence en CODAGE LPC */\n");
+            textFileOutput1.write("#include \"../include/Donnee.hpp\"\n");
+            textFileOutput1.write("/* competences des interfaces en SIGNES et CODAGE*/\n");
+            textFileOutput1.write("int competences_interfaces[NBR_INTERFACES][2]={\n");
+            textFileOutput1.write("    {1,0}, /* compétence en langages des SIGNES mais pas en CODAGE LPC */\n");
+            textFileOutput1.write("    {0,1}, /* pas de compétence en langages des SIGNES mais compétence en CODAGE LPC */\n");
             int maxi = NBR_INTERFACES - 2;
             for (int i = 0; i < maxi; i++) {
 		double f = rand.nextDouble() ;
                 if (f < 0.1) {
-                    textFileOutput.write("    {1,1}");
+                    textFileOutput1.write("    {1,1}");
                 } else if (f < 0.55) {
-                    textFileOutput.write("    {1,0}");
+                    textFileOutput1.write("    {1,0}");
                 } else {
-                    textFileOutput.write("    {0,1}");
+                    textFileOutput1.write("    {0,1}");
                 }
                 if (i < maxi - 1) {
-                    textFileOutput.write(",\n");
+                    textFileOutput1.write(",\n");
                 } else {
-                    textFileOutput.write("\n};\n");
+                    textFileOutput1.write("\n};\n");
                 }
             }
             textFileOutput.write("                  \n");
@@ -172,40 +198,36 @@ public class InstanceGenerator {
     //};
     private void writeSpecialiteInterfaces() {
         try {
-            textFileOutput.write("/* spécialités des interfaces */\n");
-            textFileOutput.write("#define SPECIALITE_SANS       -1 /* Enseigné dans le centre le plus proche */\n");
-            for (int i=0;i<NOMS_SPECIALITES.length;i++) {
-                textFileOutput.write("#define "+NOMS_SPECIALITES[i]+" "+i+"\n");
-            }
+            textFileOutput1.write("/* spécialités des interfaces */\n");
             textFileOutput.write("                  \n");
 
-            textFileOutput.write("/* specialite des interfaces */\n");
-            textFileOutput.write("int specialite_interfaces[NBR_INTERFACES][NBR_SPECIALITES]={\n");
+            textFileOutput1.write("/* specialite des interfaces */\n");
+            textFileOutput1.write("int specialite_interfaces[NBR_INTERFACES][NBR_SPECIALITES]={\n");
 
             int maxi = NBR_INTERFACES;
             for (int i = 0; i < maxi; i++) {
                 int maxj = NBR_SPECIALITES;
-                textFileOutput.write("    {");
+                textFileOutput1.write("    {");
                 for (int j = 0; j < maxj; j++) {
                     if (rand.nextDouble() < 0.2) {
-                        textFileOutput.write("1");
+                        textFileOutput1.write("1");
                     } else {
-                        textFileOutput.write("0");
+                        textFileOutput1.write("0");
                     }
                     if (j < maxj - 1) {
-                        textFileOutput.write(",");
+                        textFileOutput1.write(",");
                     } else {
-                        textFileOutput.write("}");
+                        textFileOutput1.write("}");
                     }
                 }
                 if (i < maxi - 1) {
-                    textFileOutput.write(",\n");
+                    textFileOutput1.write(",\n");
                 } else {
-                    textFileOutput.write("\n};\n");
+                    textFileOutput1.write("\n};\n");
                 }
 
             }
-            textFileOutput.write("                  \n");
+            textFileOutput1.write("                  \n");
 
         } catch (IOException ex) {
             Logger.getLogger(InstanceGenerator.class.getName()).log(Level.SEVERE, null, ex);
@@ -239,11 +261,11 @@ public class InstanceGenerator {
     //} ;
     private void writeCoord() {
         try {
-            textFileOutput.write("/* coordonnées des centres de formation, des interfaces et des apprenants */\n");
-            textFileOutput.write("float coord[NBR_NODES][2]={\n");
+            textFileOutput1.write("/* coordonnées des centres de formation, des interfaces et des apprenants */\n");
+            textFileOutput1.write("float coord[NBR_NODES][2]={\n");
 
-            textFileOutput.write("                  \n");
-            textFileOutput.write("    /* Les interfaces se rendent du centre SESSAD à l'école de formation */\n");
+            textFileOutput1.write("                  \n");
+            textFileOutput1.write("    /* Les interfaces se rendent du centre SESSAD à l'école de formation */\n");
 
 	    int maxi ;
 
@@ -252,38 +274,38 @@ public class InstanceGenerator {
             for (int i = 0; i < maxi; i++) {
                 int x = (int) (rand.nextDouble() * DIMENSION_ZONE_GEOGRAPHIQUE);
                 int y = (int) (rand.nextDouble() * DIMENSION_ZONE_GEOGRAPHIQUE);
-                textFileOutput.write("    {" + x + "," + y + "}, /* centre " + i + " */\n");
+                textFileOutput1.write("    {" + x + "," + y + "}, /* centre " + i + " */\n");
             }
 
-            textFileOutput.write("                  \n");
-            textFileOutput.write("    /* Centres de formation */\n");
+            textFileOutput1.write("                  \n");
+            textFileOutput1.write("    /* Centres de formation */\n");
 
             // Coord des centres de formation
             maxi = NBR_SPECIALITES;
             for (int i = 0; i < maxi; i++) {
                 int x = (int) (rand.nextDouble() * DIMENSION_ZONE_GEOGRAPHIQUE);
                 int y = (int) (rand.nextDouble() * DIMENSION_ZONE_GEOGRAPHIQUE);
-                textFileOutput.write("    {" + x + "," + y + "}, /* ecole formation " + NOMS_SPECIALITES[i] + " */\n");
+                textFileOutput1.write("    {" + x + "," + y + "}, /* ecole formation " + NOMS_SPECIALITES[i] + " */\n");
             }
 
-            textFileOutput.write("                  \n");
-            textFileOutput.write("    /* Apprenants */\n");
+            textFileOutput1.write("                  \n");
+            textFileOutput1.write("    /* Apprenants */\n");
 
             // Coord des apprenants
             maxi = NBR_APPRENANTS;
             for (int i = 0; i < maxi; i++) {
                 int x = (int) (rand.nextDouble() * DIMENSION_ZONE_GEOGRAPHIQUE);
                 int y = (int) (rand.nextDouble() * DIMENSION_ZONE_GEOGRAPHIQUE);
-                textFileOutput.write("    {" + x + "," + y + "}");
+                textFileOutput1.write("    {" + x + "," + y + "}");
                 if (i < maxi - 1) {
-                    textFileOutput.write(", /* apprenant " + i + " */\n");
+                    textFileOutput1.write(", /* apprenant " + i + " */\n");
                 } else {
-                    textFileOutput.write("/* apprenant " + i + " */\n};\n");
+                    textFileOutput1.write("/* apprenant " + i + " */\n};\n");
                 }
 
             }
 
-            textFileOutput.write("                  \n");
+            textFileOutput1.write("                  \n");
         } catch (IOException ex) {
             Logger.getLogger(InstanceGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -313,19 +335,11 @@ public class InstanceGenerator {
     //} ;    
     private void writeFormation() {
         try {
-            textFileOutput.write("#define NBR_FORMATION          " + NBR_FORMATIONS + "\n");
-            textFileOutput.write("                  \n");
-            textFileOutput.write("#define LUNDI                  1\n");
-            textFileOutput.write("#define MARDI                  2\n");
-            textFileOutput.write("#define MERCREDI               3\n");
-            textFileOutput.write("#define JEUDI                  4\n");
-            textFileOutput.write("#define VENDREDI               5\n");
-            textFileOutput.write("#define SAMEDI                 6\n");
-            textFileOutput.write("                  \n");
+           
 
-            textFileOutput.write("/* formation : id formation, specialite ou centre de formation, competence, horaire debut formation, horaire fin formation */\n");
+            textFileOutput1.write("/* formation : id formation, specialite ou centre de formation, competence, horaire debut formation, horaire fin formation */\n");
 
-            textFileOutput.write("int formation[NBR_FORMATION][6]={\n");
+            textFileOutput1.write("int formation[NBR_FORMATION][6]={\n");
 
             int maxi = NBR_APPRENANTS;
             // public static int NBR_FORMATIONS = NBR_APPRENANTS * NBR_FORMATIONS_PAR_SEMAINE;
@@ -347,16 +361,16 @@ public class InstanceGenerator {
                         hfin = hdebut + rand.nextInt(18 - hdebut) + 2;
 
                     }
-                    textFileOutput.write("   {" + i + "," + specialite + "," + competence + "," + jour + "," + hdebut + "," + hfin + "}");
+                    textFileOutput1.write("   {" + i + "," + specialite + "," + competence + "," + jour + "," + hdebut + "," + hfin + "}");
                     if (i < maxi - 1 || j < maxj - 1) {
-                        textFileOutput.write(",\n");
+                        textFileOutput1.write(",\n");
                     } else {
-                        textFileOutput.write("\n};\n");
+                        textFileOutput1.write("\n};\n");
                     }
                 }
             }
 
-            textFileOutput.write("                  \n");
+            textFileOutput1.write("                  \n");
             textFileOutput.write("#endif //DONNEES\n");
         } catch (IOException ex) {
             Logger.getLogger(InstanceGenerator.class.getName()).log(Level.SEVERE, null, ex);

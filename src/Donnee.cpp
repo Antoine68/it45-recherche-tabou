@@ -1,0 +1,237 @@
+#include "../include/Donnee.hpp"
+/* competences des interfaces en SIGNES et CODAGE*/
+int competences_interfaces[NBR_INTERFACES][2]={
+    {1,0}, /* compétence en langages des SIGNES mais pas en CODAGE LPC */
+    {0,1}, /* pas de compétence en langages des SIGNES mais compétence en CODAGE LPC */
+    {1,0},
+    {0,1},
+    {1,0},
+    {1,1},
+    {1,0},
+    {0,1},
+    {0,1},
+    {1,0},
+    {0,1},
+    {0,1},
+    {0,1},
+    {0,1},
+    {1,0},
+    {1,1},
+    {1,0},
+    {1,0},
+    {0,1},
+    {0,1},
+    {1,1},
+    {1,1},
+    {1,0},
+    {0,1}
+};
+/* spécialités des interfaces */
+/* specialite des interfaces */
+int specialite_interfaces[NBR_INTERFACES][NBR_SPECIALITES]={
+    {0,0,1,0,0},
+    {0,0,0,0,0},
+    {0,0,1,0,0},
+    {1,0,0,0,1},
+    {0,0,0,1,0},
+    {0,1,0,0,0},
+    {0,0,0,0,0},
+    {0,0,0,1,1},
+    {0,1,0,0,0},
+    {0,0,0,0,0},
+    {1,0,0,0,0},
+    {0,0,0,0,0},
+    {0,0,0,1,1},
+    {0,0,0,0,0},
+    {1,0,0,1,0},
+    {0,0,0,1,0},
+    {0,0,0,0,1},
+    {0,0,0,0,0},
+    {1,0,0,0,0},
+    {0,0,1,1,0},
+    {0,0,0,0,0},
+    {1,0,0,0,0},
+    {0,0,0,0,1},
+    {0,0,0,0,1}
+};
+                  
+/* coordonnées des centres de formation, des interfaces et des apprenants */
+float coord[NBR_NODES][2]={
+                  
+    /* Les interfaces se rendent du centre SESSAD à l'école de formation */
+    {69,172}, /* centre 0 */
+                  
+    /* Centres de formation */
+    {150,141}, /* ecole formation SPECIALITE_MENUISERIE */
+    {134,83}, /* ecole formation SPECIALITE_ELECTRICITE */
+    {84,62}, /* ecole formation SPECIALITE_MECANIQUE */
+    {167,34}, /* ecole formation SPECIALITE_INFORMATIQUE */
+    {139,155}, /* ecole formation SPECIALITE_CUISINE */
+                  
+    /* Apprenants */
+    {62,16}, /* apprenant 0 */
+    {180,158}, /* apprenant 1 */
+    {151,190}, /* apprenant 2 */
+    {23,20}, /* apprenant 3 */
+    {72,91}, /* apprenant 4 */
+    {183,109}, /* apprenant 5 */
+    {4,130}, /* apprenant 6 */
+    {72,84}, /* apprenant 7 */
+    {60,104}, /* apprenant 8 */
+    {47,185}, /* apprenant 9 */
+    {141,61}, /* apprenant 10 */
+    {145,61}, /* apprenant 11 */
+    {88,118}, /* apprenant 12 */
+    {99,135}, /* apprenant 13 */
+    {7,79}, /* apprenant 14 */
+    {108,88}, /* apprenant 15 */
+    {68,169}, /* apprenant 16 */
+    {150,137}, /* apprenant 17 */
+    {43,74}, /* apprenant 18 */
+    {17,162}, /* apprenant 19 */
+    {6,117}, /* apprenant 20 */
+    {39,69}, /* apprenant 21 */
+    {35,136}, /* apprenant 22 */
+    {18,143}, /* apprenant 23 */
+    {91,54}, /* apprenant 24 */
+    {174,100}, /* apprenant 25 */
+    {151,75}, /* apprenant 26 */
+    {143,141}, /* apprenant 27 */
+    {106,103}, /* apprenant 28 */
+    {107,43}, /* apprenant 29 */
+    {181,113}, /* apprenant 30 */
+    {62,166}, /* apprenant 31 */
+    {145,86}, /* apprenant 32 */
+    {183,179}, /* apprenant 33 */
+    {173,68}, /* apprenant 34 */
+    {78,164}, /* apprenant 35 */
+    {22,9}, /* apprenant 36 */
+    {13,103}, /* apprenant 37 */
+    {86,190}, /* apprenant 38 */
+    {110,17}, /* apprenant 39 */
+    {40,156}, /* apprenant 40 */
+    {123,184}, /* apprenant 41 */
+    {152,62}, /* apprenant 42 */
+    {61,134}, /* apprenant 43 */
+    {31,14}, /* apprenant 44 */
+    {195,105}, /* apprenant 45 */
+    {73,31}, /* apprenant 46 */
+    {9,107}, /* apprenant 47 */
+    {9,133}, /* apprenant 48 */
+    {190,164}, /* apprenant 49 */
+    {41,82}, /* apprenant 50 */
+    {132,154}, /* apprenant 51 */
+    {56,56}, /* apprenant 52 */
+    {49,111}, /* apprenant 53 */
+    {5,114}, /* apprenant 54 */
+    {84,135}, /* apprenant 55 */
+    {94,100}, /* apprenant 56 */
+    {155,90}, /* apprenant 57 */
+    {74,38}, /* apprenant 58 */
+    {48,156}, /* apprenant 59 */
+    {53,34}, /* apprenant 60 */
+    {177,177}, /* apprenant 61 */
+    {180,159}, /* apprenant 62 */
+    {81,41}, /* apprenant 63 */
+    {180,137}, /* apprenant 64 */
+    {154,174}, /* apprenant 65 */
+    {197,145}, /* apprenant 66 */
+    {74,2}, /* apprenant 67 */
+    {116,182}, /* apprenant 68 */
+    {150,40}, /* apprenant 69 */
+    {134,169}, /* apprenant 70 */
+    {45,75}, /* apprenant 71 */
+    {179,122}, /* apprenant 72 */
+    {44,141}, /* apprenant 73 */
+    {86,7}, /* apprenant 74 */
+    {175,154}, /* apprenant 75 */
+    {172,131}, /* apprenant 76 */
+    {79,187}, /* apprenant 77 */
+    {88,181}, /* apprenant 78 */
+    {37,94}/* apprenant 79 */
+};
+                  
+/* formation : id formation, specialite ou centre de formation, competence, horaire debut formation, horaire fin formation */
+int formation[NBR_FORMATION][6]={
+   {0,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,SAMEDI,13,17},
+   {1,SPECIALITE_MENUISERIE,COMPETENCE_CODAGE,MERCREDI,14,16},
+   {2,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,MERCREDI,16,18},
+   {3,SPECIALITE_CUISINE,COMPETENCE_CODAGE,MERCREDI,13,16},
+   {4,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,SAMEDI,16,18},
+   {5,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,SAMEDI,15,18},
+   {6,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,VENDREDI,13,18},
+   {7,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,MARDI,13,19},
+   {8,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,VENDREDI,14,17},
+   {9,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,MERCREDI,15,18},
+   {10,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,SAMEDI,14,17},
+   {11,SPECIALITE_MECANIQUE,COMPETENCE_CODAGE,MERCREDI,15,18},
+   {12,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,VENDREDI,16,18},
+   {13,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,LUNDI,13,19},
+   {14,SPECIALITE_MECANIQUE,COMPETENCE_SIGNES,LUNDI,15,19},
+   {15,SPECIALITE_CUISINE,COMPETENCE_CODAGE,JEUDI,16,18},
+   {16,SPECIALITE_MENUISERIE,COMPETENCE_CODAGE,JEUDI,15,19},
+   {17,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,VENDREDI,10,12},
+   {18,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,JEUDI,8,10},
+   {19,SPECIALITE_CUISINE,COMPETENCE_CODAGE,JEUDI,16,18},
+   {20,SPECIALITE_MECANIQUE,COMPETENCE_SIGNES,VENDREDI,15,18},
+   {21,SPECIALITE_CUISINE,COMPETENCE_CODAGE,SAMEDI,8,10},
+   {22,SPECIALITE_INFORMATIQUE,COMPETENCE_SIGNES,MARDI,8,10},
+   {23,SPECIALITE_INFORMATIQUE,COMPETENCE_SIGNES,VENDREDI,9,11},
+   {24,SPECIALITE_MECANIQUE,COMPETENCE_CODAGE,SAMEDI,10,12},
+   {25,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,JEUDI,10,12},
+   {26,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,MARDI,16,18},
+   {27,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,JEUDI,8,12},
+   {28,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,MERCREDI,8,11},
+   {29,SPECIALITE_MECANIQUE,COMPETENCE_SIGNES,JEUDI,10,12},
+   {30,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,MARDI,13,18},
+   {31,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,LUNDI,9,11},
+   {32,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,LUNDI,15,19},
+   {33,SPECIALITE_MECANIQUE,COMPETENCE_CODAGE,JEUDI,16,19},
+   {34,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,JEUDI,10,12},
+   {35,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,JEUDI,15,18},
+   {36,SPECIALITE_CUISINE,COMPETENCE_CODAGE,MARDI,10,12},
+   {37,SPECIALITE_MENUISERIE,COMPETENCE_CODAGE,SAMEDI,16,18},
+   {38,SPECIALITE_MECANIQUE,COMPETENCE_CODAGE,VENDREDI,13,15},
+   {39,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,LUNDI,13,16},
+   {40,SPECIALITE_MENUISERIE,COMPETENCE_CODAGE,JEUDI,13,19},
+   {41,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,MARDI,9,11},
+   {42,SPECIALITE_CUISINE,COMPETENCE_SIGNES,JEUDI,15,19},
+   {43,SPECIALITE_MECANIQUE,COMPETENCE_CODAGE,LUNDI,14,16},
+   {44,SPECIALITE_MECANIQUE,COMPETENCE_SIGNES,LUNDI,9,12},
+   {45,SPECIALITE_INFORMATIQUE,COMPETENCE_SIGNES,MARDI,16,19},
+   {46,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,VENDREDI,15,19},
+   {47,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,VENDREDI,13,15},
+   {48,SPECIALITE_CUISINE,COMPETENCE_CODAGE,SAMEDI,16,18},
+   {49,SPECIALITE_MENUISERIE,COMPETENCE_CODAGE,MARDI,13,17},
+   {50,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,MERCREDI,9,11},
+   {51,SPECIALITE_INFORMATIQUE,COMPETENCE_SIGNES,VENDREDI,13,16},
+   {52,SPECIALITE_INFORMATIQUE,COMPETENCE_SIGNES,VENDREDI,10,12},
+   {53,SPECIALITE_CUISINE,COMPETENCE_CODAGE,JEUDI,14,18},
+   {54,SPECIALITE_MECANIQUE,COMPETENCE_CODAGE,JEUDI,15,19},
+   {55,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,SAMEDI,10,12},
+   {56,SPECIALITE_MENUISERIE,COMPETENCE_CODAGE,MARDI,13,18},
+   {57,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,VENDREDI,13,18},
+   {58,SPECIALITE_MECANIQUE,COMPETENCE_SIGNES,SAMEDI,10,12},
+   {59,SPECIALITE_CUISINE,COMPETENCE_CODAGE,MARDI,8,12},
+   {60,SPECIALITE_CUISINE,COMPETENCE_CODAGE,MARDI,8,10},
+   {61,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,MERCREDI,13,16},
+   {62,SPECIALITE_INFORMATIQUE,COMPETENCE_SIGNES,JEUDI,13,18},
+   {63,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,JEUDI,14,19},
+   {64,SPECIALITE_INFORMATIQUE,COMPETENCE_SIGNES,LUNDI,16,18},
+   {65,SPECIALITE_MECANIQUE,COMPETENCE_SIGNES,MERCREDI,13,17},
+   {66,SPECIALITE_CUISINE,COMPETENCE_SIGNES,SAMEDI,9,12},
+   {67,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,LUNDI,10,12},
+   {68,SPECIALITE_MENUISERIE,COMPETENCE_CODAGE,LUNDI,10,12},
+   {69,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,MARDI,9,11},
+   {70,SPECIALITE_ELECTRICITE,COMPETENCE_CODAGE,MARDI,8,11},
+   {71,SPECIALITE_MECANIQUE,COMPETENCE_SIGNES,MARDI,10,12},
+   {72,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,SAMEDI,15,17},
+   {73,SPECIALITE_MECANIQUE,COMPETENCE_CODAGE,VENDREDI,13,18},
+   {74,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,MARDI,8,12},
+   {75,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,MARDI,16,19},
+   {76,SPECIALITE_CUISINE,COMPETENCE_CODAGE,VENDREDI,8,10},
+   {77,SPECIALITE_INFORMATIQUE,COMPETENCE_CODAGE,VENDREDI,10,12},
+   {78,SPECIALITE_ELECTRICITE,COMPETENCE_SIGNES,JEUDI,13,16},
+   {79,SPECIALITE_MENUISERIE,COMPETENCE_SIGNES,JEUDI,10,12}
+};
+                  
