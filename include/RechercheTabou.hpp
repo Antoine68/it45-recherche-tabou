@@ -52,7 +52,7 @@ class RechercheTabou
        Centre* getFormationCentre(int idFormation);
        bool deplacementEstTabou(int id1, int id2);
        
-       void premiereSolution();
+       void firstFit();
        void voisinage();
 
 };

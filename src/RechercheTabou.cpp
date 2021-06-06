@@ -14,7 +14,7 @@ RechercheTabou::RechercheTabou(std::vector<Formation>& formations, std::vector<I
     this->m_solutionActuelle = new Solution();
 
     this->calculerDistances();
-    this->premiereSolution();
+    this->firstFit();
 
 }
 
@@ -31,30 +31,41 @@ void RechercheTabou::voisinage() {
 
 }
 
+/**
+ * Algorithme glouton first-fit
+ * 
+ * Pour chaque formation on attribut la première interface
+ * qui remplit toutes les contraintes obligatoires.
+ * 
+ * Puis on mélange le tableau des interfaces pour ne pas
+ * toujours parcourrir le tableau dans le même ordre.
+ * 
+ * Problématique : les interfaces ayant les deux compétances
+ * -> car elles peuvent être prise pour une compétance alors qu'il
+ * n'y a pas assez d'interface pour l'autre compétance
+ * -> possibilité de solution non valide
+ */
+void RechercheTabou::firstFit() {
 
-void RechercheTabou::premiereSolution() {
-
-    bool trouve = false;
+    bool trouve = false; //interface trouvee
     int j = 0;
 
-    std::vector<Interface> interfaces = this->m_interfaces;
+    std::vector<Interface> interfaces = this->m_interfaces; //copie du vecteur des interfaces
     
-    Formation* formation;
-    Interface* interface;
+    Formation* formation; //pointeur sur la formation actuelle
+    Interface* interface; //pointeur sur l'interface actuelle
 
-    bool doubleCompetance = false;
-    Interface* ptrDoubleCompetance;
+    int duree = 0; //duree de la formation
 
-    int duree = 0;
+    int id = -1;//id interface trouvee
 
     for(int i = 0; i < NBR_FORMATION; i++) {
 
         j = 0;
         trouve = false;
-        doubleCompetance = false;
         formation = &this->m_formations[i];
         duree = formation->getHeureFin() - formation->getHeureDebut();
-
+        id = -1;
         while(j<NBR_INTERFACES && !trouve) {
             interface = &interfaces[j];
             if (interface->aCompetance(formation->getCompetance()) 
@@ -62,20 +73,19 @@ void RechercheTabou::premiereSolution() {
                 && (interface->getNombreHeuresTotales() + duree) <= 35
                 && !interface->estOccuppe(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()) 
             ) {
-
-                if(interface->aToutesCompetances()) {
-                    doubleCompetance = true;
-                    ptrDoubleCompetance = interface;
-                } else {
-                    trouve = true;
-                }
+                trouve = true;
+                id = interface->getId();
             }
             j++;
         }
-        if(j == NBR_INTERFACES-1 && doubleCompetance) interface = ptrDoubleCompetance;
-        this->m_solutionActuelle->affecter(formation->getId(), interface->getId());
-        interface->ajouterOccupation(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin());
+        this->m_solutionActuelle->affecter(formation->getId(), id);
+        if(id != -1) {
+            interface->ajouterOccupation(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin());
+        }
         Random::melangerAleatoirementInterfaces(interfaces);
+
+        //si l'id est égale à -1 cela signifie qu'aucune formation n'a été trouvé
+        //et donc que la solution n'est pas valide
     }
     this->m_solutionActuelle->afficher();
     
