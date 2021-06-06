@@ -81,23 +81,6 @@ void RechercheTabou::premiereSolution() {
     
 }
 
-bool RechercheTabou::estOccuppe(bool occupationJournaliere[24], int heureDebut, int heureFin) {
-    for (int i = heureDebut; i <= heureFin; i++)
-    {
-        if(occupationJournaliere[i%24]) return true;
-    }
-    return false;
-    
-}
-
-int RechercheTabou::calculerHeuresParSemaine(int nbHeures[7]) {
-    int resultat = 0;
-    for (int i = 0; i < 7; i++)
-    {
-        resultat += nbHeures[i];
-    }
-    return resultat;    
-}
 
 void RechercheTabou::calculerDistances() {
     Centre* centre1;
