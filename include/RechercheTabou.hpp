@@ -13,6 +13,7 @@
 #include "Solution.hpp"
 #include "Centre.hpp"
 #include "Donnee.hpp"
+#include "Random.hpp"
 
 
 class RechercheTabou
@@ -48,10 +49,12 @@ class RechercheTabou
        int getCentreIndexById(int id);
        void calculerDistances();
        int getDistanceEntreCentres(int id1, int id2);
+       int calculerHeuresParSemaine(int nbHeures[7]);
+       bool estOccuppe(bool occupationJournaliere[24], int heureDebut, int heureFin);
        Centre* getFormationCentre(int idFormation);
        bool deplacementEstTabou(int id1, int id2);
        
-       void glouton();
+       void premiereSolution();
        void voisinage();
 
 };

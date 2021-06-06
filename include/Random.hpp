@@ -8,6 +8,7 @@
 #include <vector>
 #include <fstream>
 #include <time.h>
+#include <algorithm>
 #include "Interface.hpp"
 
 
@@ -16,8 +17,8 @@ class Random
 {
     public:
         static void randomize();
-        static long aleatoire(long borne);
-        static std::vector<Interface&>& melangerAleatoirementInterfaces(std::vector<Interface&>& interfaces);
+        static long aleatoire(int borne);
+        static void melangerAleatoirementInterfaces(std::vector<Interface>& interfaces);
 
 
     protected:

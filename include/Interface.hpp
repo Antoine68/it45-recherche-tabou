@@ -7,6 +7,9 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <map>
+#include <algorithm>
+#include <vector>
 #include "Donnee.hpp"
 
 class Interface
@@ -17,6 +20,13 @@ class Interface
         int getId();
         bool aCompetance(int competance);
         bool aSpecialite(int specialite);
+        bool aToutesCompetances();
+        bool estOccuppe(int jour, int heureDebut, int heureFin);
+        void ajouterOccupation(int jour, int heureDebut, int heureFin);
+        void supprimerOccupation(int jour, int heureDebut, int heureFin);
+        int getNombreHeuresParJour(int jour);
+        int getNombreHeuresTotales();
+        
 
     protected:
 
@@ -24,6 +34,7 @@ class Interface
        int m_id;
        int m_competances[2];
        int m_specialites[NBR_SPECIALITES];
+       std::map<int, std::vector<int>> m_occupations;
 };
 
 #endif // INTERFACE_H

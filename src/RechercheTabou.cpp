@@ -14,7 +14,7 @@ RechercheTabou::RechercheTabou(std::vector<Formation>& formations, std::vector<I
     this->m_solutionActuelle = new Solution();
 
     this->calculerDistances();
-    this->glouton();
+    this->premiereSolution();
 
 }
 
@@ -31,8 +31,72 @@ void RechercheTabou::voisinage() {
 
 }
 
-void RechercheTabou::glouton() {
 
+void RechercheTabou::premiereSolution() {
+
+    bool trouve = false;
+    int j = 0;
+
+    std::vector<Interface> interfaces = this->m_interfaces;
+    
+    Formation* formation;
+    Interface* interface;
+
+    bool doubleCompetance = false;
+    Interface* ptrDoubleCompetance;
+
+    int duree = 0;
+
+    for(int i = 0; i < NBR_FORMATION; i++) {
+
+        j = 0;
+        trouve = false;
+        doubleCompetance = false;
+        formation = &this->m_formations[i];
+        duree = formation->getHeureFin() - formation->getHeureDebut();
+
+        while(j<NBR_INTERFACES && !trouve) {
+            interface = &interfaces[j];
+            if (interface->aCompetance(formation->getCompetance()) 
+                && (interface->getNombreHeuresParJour(formation->getJour()) + duree) <= 8
+                && (interface->getNombreHeuresTotales() + duree) <= 35
+                && !interface->estOccuppe(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()) 
+            ) {
+
+                if(interface->aToutesCompetances()) {
+                    doubleCompetance = true;
+                    ptrDoubleCompetance = interface;
+                } else {
+                    trouve = true;
+                }
+            }
+            j++;
+        }
+        if(j == NBR_INTERFACES-1 && doubleCompetance) interface = ptrDoubleCompetance;
+        this->m_solutionActuelle->affecter(formation->getId(), interface->getId());
+        interface->ajouterOccupation(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin());
+        Random::melangerAleatoirementInterfaces(interfaces);
+    }
+    this->m_solutionActuelle->afficher();
+    
+}
+
+bool RechercheTabou::estOccuppe(bool occupationJournaliere[24], int heureDebut, int heureFin) {
+    for (int i = heureDebut; i <= heureFin; i++)
+    {
+        if(occupationJournaliere[i%24]) return true;
+    }
+    return false;
+    
+}
+
+int RechercheTabou::calculerHeuresParSemaine(int nbHeures[7]) {
+    int resultat = 0;
+    for (int i = 0; i < 7; i++)
+    {
+        resultat += nbHeures[i];
+    }
+    return resultat;    
 }
 
 void RechercheTabou::calculerDistances() {
@@ -48,10 +112,9 @@ void RechercheTabou::calculerDistances() {
                 centre2 = this->getCentreById(j);
                 this->m_distances[i][j] = 
                     sqrtf(powf((centre2->getCoordonneeX() - centre1->getCoordonneeX()),2) 
-                                + powf((centre2->getCoordonneeY() - centre1->getCoordonneeY()),2));
+                        + powf((centre2->getCoordonneeY() - centre1->getCoordonneeY()),2));
                
             }
-            std::cout << i << " " << j << " " << this->m_distances[i][j] << std::endl;
         }
     }
     

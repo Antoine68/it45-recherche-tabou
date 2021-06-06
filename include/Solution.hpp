@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-
+#include "Donnee.hpp"
 
 
 class Solution
@@ -14,10 +14,15 @@ class Solution
     public:
         Solution();
         virtual ~Solution();
+        void affecter(int idFormation, int idInterface);
+        void afficher();
+
 
     protected:
 
     private:
+        int m_affectations[NBR_FORMATIONS] = {};
+
        
 };
 

@@ -8,8 +8,13 @@ Interface::Interface(int id, int competances[2], int specialites[NBR_SPECIALITES
         this->m_competances[i] = competances[i];
     }
     for(int i=0; i<NBR_SPECIALITES; i++) {
-        this->m_competances[i] = specialites[i];
+        this->m_specialites[i] = specialites[i];
     }
+    for (int i = 0; i < 7; i++)
+    {
+        this->m_occupations[i] = std::vector<int>();
+    }
+    
 
 }
 
@@ -28,4 +33,48 @@ bool Interface::aCompetance(int competance) {
 
 bool Interface::aSpecialite(int specialite) {
     return this->m_specialites[specialite] == 1;
+}
+
+bool Interface::aToutesCompetances() {
+    for (int i = 0; i < 2; i++)
+    {
+        if(this->m_competances[i] == 0) return false;
+    }
+    return true;    
+}
+
+bool Interface::estOccuppe(int jour, int heureDebut, int heureFin) {
+    for (int i = heureDebut; i <= heureFin; i++)
+    {
+        if(std::find(this->m_occupations[jour].begin(), this->m_occupations[jour].end(), i) != this->m_occupations[jour].end()) return true;
+    }
+    return false;
+}
+
+void Interface::ajouterOccupation(int jour, int heureDebut, int heureFin) {
+    for (int i = heureDebut; i <= heureFin; i++)
+    {
+        this->m_occupations[jour].push_back(i);
+    }
+}
+
+void Interface::supprimerOccupation(int jour, int heureDebut, int heureFin) {
+    for (int i = heureDebut; i <= heureFin; i++)
+    {
+        this->m_occupations[jour].erase(std::remove(this->m_occupations[jour].begin(), this->m_occupations[jour].end(), i), this->m_occupations[jour].end());   
+    }
+}
+
+int Interface::getNombreHeuresParJour(int jour) {
+    return this->m_occupations[jour].size();
+}
+
+int Interface::getNombreHeuresTotales() {
+    int total = 0;
+    for (int i = 0; i < 7; i++)
+    {
+        total += this->getNombreHeuresParJour(i);
+    }
+    return total;
+    
 }

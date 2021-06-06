@@ -43,10 +43,8 @@ int main(int argc, char **argv)
 
     Solution* meilleure = tabou.rechercher();
 
-
     
-	
-    cout << VENDREDI << endl;
+
 
 	return 0;
 }
