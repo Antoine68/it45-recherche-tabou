@@ -10,7 +10,6 @@
 #include <cmath> 
 #include "Formation.hpp"
 #include "Interface.hpp"
-#include "Solution.hpp"
 #include "Centre.hpp"
 #include "Donnee.hpp"
 #include "Random.hpp"
@@ -22,7 +21,7 @@ class RechercheTabou
         RechercheTabou(std::vector<Formation>& formations, std::vector<Interface>& interfaces, std::vector<Centre>& centres, 
                        int dureeTabou, int longueurTabou, int nbIterationAvantDiversification, int dureeRecherche);
         virtual ~RechercheTabou();
-        Solution* rechercher();
+        void rechercher();
 
 
     protected:
@@ -37,9 +36,13 @@ class RechercheTabou
        int m_longueurTabou;
        int m_nbIterationAvantDiversification;
        int m_iterationActuelle;
-       Solution* m_solutionActuelle;
-       Solution* m_meilleureSolution;
        float m_distances[NBR_CENTRES_FORMATION+1][NBR_CENTRES_FORMATION+1];
+       float m_facteurCorrelation;
+
+       int m_meilleureSolution[NBR_FORMATIONS] = {-1};
+       int m_solutionActuelle[NBR_FORMATIONS] = {-1};
+       float m_meilleureFitness;
+       float m_fitnessActuelle;
 
        Formation* getFormationById(int id);
        int getFormationIndexById(int id);
@@ -48,12 +51,21 @@ class RechercheTabou
        Centre* getCentreById(int id);
        int getCentreIndexById(int id);
        void calculerDistances();
-       int getDistanceEntreCentres(int id1, int id2);
+       float getDistanceEntreCentres(int id1, int id2);
        Centre* getFormationCentre(int idFormation);
        bool deplacementEstTabou(int id1, int id2);
-       
+       float calculerMoyenne(float* donnees, int taille);
+       float calculerEcartType(float* donnees, int taille);
+       //algorithmes
        void firstFit();
        void voisinage();
+
+       //solution
+       void evaluerSolutionActuelle();
+       void nouvelleMeilleureSolution();
+       void afficherMeilleurSolution();
+       
+
 
 };
 

@@ -13,7 +13,7 @@
 class Formation
 {
     public:
-        Formation(int id, int competance, int specialite, int jour, int heureDebut, int heureFin);
+        Formation(int id, int competance, int specialite, int jour, int heureDebut, int heureFin, int centre);
         virtual ~Formation();
         int getId();
         int getCompetance();
@@ -21,6 +21,7 @@ class Formation
         int getHeureDebut();
         int getHeureFin();
         int getSpecialite();
+        int getCentre();
         
  
     protected:
@@ -32,6 +33,7 @@ class Formation
         int m_heureFin;
         int m_competance;
         int m_specialite;
+        int m_centre;
         
         
        

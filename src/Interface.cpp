@@ -78,3 +78,17 @@ int Interface::getNombreHeuresTotales() {
     return total;
     
 }
+
+bool Interface::estDerniereDeLaJournee(int jour, int heureFin) {
+    int derniereHeure = 0;
+    for (size_t i = 0; i < this->m_occupations[jour].size(); i++)
+    {
+        if(derniereHeure < this->m_occupations[jour][i]) derniereHeure = this->m_occupations[jour][i];
+    }
+    return derniereHeure == heureFin;
+}
+
+bool Interface::estPremiereDeLaJournee(int jour, int heureDebut) {
+    std::sort(this->m_occupations[jour].begin(), this->m_occupations[jour].end());
+    return this->m_occupations[jour][0] == heureDebut;
+}

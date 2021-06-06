@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <vector>
 #include "Donnee.hpp"
+#include "Formation.hpp"
 
 class Interface
 {
@@ -25,6 +26,8 @@ class Interface
         void ajouterOccupation(int jour, int heureDebut, int heureFin);
         void supprimerOccupation(int jour, int heureDebut, int heureFin);
         int getNombreHeuresParJour(int jour);
+        bool estDerniereDeLaJournee(int jour, int heureFin);
+        bool estPremiereDeLaJournee(int jour, int heureDebut);
         int getNombreHeuresTotales();
         
 

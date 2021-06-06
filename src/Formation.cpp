@@ -1,7 +1,7 @@
 #include "../include/Formation.hpp"
 
 
-Formation::Formation(int id, int specialite, int competance,  int jour, int heureDebut, int heureFin)
+Formation::Formation(int id, int specialite, int competance,  int jour, int heureDebut, int heureFin, int centre)
 {
     this->m_id = id;
     this->m_competance = competance;
@@ -9,6 +9,7 @@ Formation::Formation(int id, int specialite, int competance,  int jour, int heur
     this->m_jour = jour;
     this->m_heureDebut = heureDebut;
     this->m_heureFin = heureFin;
+    this->m_centre = centre;
     
 }
 
@@ -39,6 +40,10 @@ int Formation::getHeureDebut() {
 
 int Formation::getHeureFin() {
     return this->m_heureFin;
+}
+
+int Formation::getCentre() {
+    return this->m_centre;
 }
 
 
