@@ -38,8 +38,8 @@ int main(int argc, char **argv)
         formations.push_back(*(new Formation(f[0], f[1], f[2], f[3], f[4], f[5], f[1])));
     }
 
-    int dureeTabou = 500;
-    int iterationAvantDiversification = 100;
+    int dureeTabou = 10;
+    int iterationAvantDiversification = 10;
     RechercheTabou tabou(formations, interfaces, centres, dureeTabou, iterationAvantDiversification, 1);
 
     tabou.rechercher();

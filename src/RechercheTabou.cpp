@@ -37,7 +37,7 @@ void RechercheTabou::rechercher() {
    float fitnessAvant, fitnessApres = 0.0;
    int meilleureI, meilleureJ;
    this->m_iterationActuelle = 0;
-   while (this->m_iterationActuelle < 280)
+   while (this->m_iterationActuelle < 300)
    {
       
        while(!this->voisinage(meilleureI, meilleureJ)) {
@@ -61,6 +61,7 @@ void RechercheTabou::rechercher() {
        }
        if (nbIterationsSansAmelioration == this->m_nbIterationAvantDiversification)
        {
+           std::cout << "diver" << std::endl;
            this->firstFit();
        }
        this->m_iterationActuelle++;
@@ -77,32 +78,37 @@ void RechercheTabou::rechercher() {
  */
 bool RechercheTabou::voisinage(int& index1, int& index2) {
     //choix premier index aléatoire
-    int indexRandom = Random::aleatoire(NBR_FORMATIONS);
+    //int indexRandom = Random::aleatoire(NBR_FORMATIONS);
     float meilleureFitness = 999999.0;
     float fitness;
-    int meilleurVoisin = -1;
+    int meilleurVoisin1 = -1;
+    int meilleurVoisin2 = -1;
     //pour chaque attribution
-    for (int j = 0; j < NBR_FORMATION; j++)
+    for (int i = 0; i < NBR_FORMATION; i++)
     {
-        //si elles sont inversibles
-        if(j != indexRandom && this->estInversible(indexRandom, j)) {
-            //on regarde si l'inversion est meilleures que les précédentes
-            this->inverser(indexRandom, j);
-            fitness = this->m_fitnessActuelle;
-            this->evaluerSolutionActuelle();
-            //si oui on la marque comme meilleure inversion
-            if(this->m_fitnessActuelle < meilleureFitness) {
-                meilleureFitness = fitness;
-                meilleurVoisin = j;
+        for (int j = 0; j < NBR_FORMATION; j++)
+        {
+            //si elles sont inversibles
+            if(j != i && this->estInversible(i, j)) {
+                //on regarde si l'inversion est meilleures que les précédentes
+                this->inverser(i, j);
+                fitness = this->m_fitnessActuelle;
+                this->evaluerSolutionActuelle();
+                //si oui on la marque comme meilleure inversion
+                if(this->m_fitnessActuelle < meilleureFitness) {
+                    meilleureFitness = fitness;
+                    meilleurVoisin2 = j;
+                    meilleurVoisin1 = i;
+                }
+                //on remet la solution actuelle comme elle était avant
+                this->inverser(i, j);
+                this->m_fitnessActuelle = fitness;
             }
-            //on remet la solution actuelle comme elle était avant
-            this->inverser(indexRandom, j);
-            this->m_fitnessActuelle = fitness;
         }
     }
-    if(meilleurVoisin != -1) {
-        index1 = indexRandom;
-        index2 = meilleurVoisin;
+    if(meilleurVoisin1 != -1 && meilleurVoisin1 != -1) {
+        index1 = meilleurVoisin1;
+        index2 = meilleurVoisin2;
         return true;
     }
     return false;
