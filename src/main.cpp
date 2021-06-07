@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     }
 
     int dureeTabou = 80;
-    int iterationAvantDiversification = 100;
+    int iterationAvantDiversification = 1000;
 
     RechercheTabou tabou(formations, interfaces, centres, dureeTabou, iterationAvantDiversification);
 

@@ -27,10 +27,10 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%$(EXT)
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 clean:
-	rm -rf $(BUILDDIR)
+	@rm -rf $(BUILDDIR)
 
 mrproper: clean
-	rm -rf $(BINDIR)
+	@rm -rf $(BINDIR)
 
 build: $(EXEC)
 
