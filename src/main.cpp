@@ -37,8 +37,7 @@ int main(int argc, char **argv)
         int* f = formation[k];
         formations.push_back(*(new Formation(f[0], f[1], f[2], f[3], f[4], f[5], f[1])));
     }
-    
-    RechercheTabou tabou(formations, interfaces, centres, 1, 1, 1, 1);
+    RechercheTabou tabou(formations, interfaces, centres, 1, 1, 5, 1);
 
     tabou.rechercher();
 

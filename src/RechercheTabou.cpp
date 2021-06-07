@@ -13,7 +13,8 @@ RechercheTabou::RechercheTabou(std::vector<Formation>& formations, std::vector<I
     this->m_dureeRecherche = dureeRecherche;
     this->m_meilleureFitness = 999999999.0;
     this->calculerDistances();
-    this->firstFit();
+    
+    
 
 }
 
@@ -23,12 +24,150 @@ RechercheTabou::~RechercheTabou()
 }
 
 void RechercheTabou::rechercher() {
+   //on cherche une solution initiale
+   this->firstFit();
+   std::cout << "premiere solution :" << std::endl;
+   this->afficherMeilleurSolution();
+   std::cout << "----" << std::endl;
+   //bool descente = false;
+   int nbIterationsSansAmelioration = 0;
+   float fitnessAvant, fitnessApres = 0.0;
+   int meilleureI, meilleureJ;
+   this->m_iterationActuelle = 0;
+   while (this->m_iterationActuelle < 5000)
+   {
+      
+       while(!this->voisinage(meilleureI, meilleureJ)) {
+           this->firstFit();
+       }
+       
+       this->inverser(meilleureI, meilleureJ);
+       this->evaluerSolutionActuelle();
+       if(this->m_meilleureFitness > this->m_fitnessActuelle) this->nouvelleMeilleureSolution();
+       
+
+       fitnessAvant = fitnessApres;
+       fitnessApres = this->m_fitnessActuelle;
+       //std::cout << "avant " << fitnessAvant << "après " << fitnessApres << std::endl;
+       //diversification
+       if (fitnessApres >= fitnessAvant)
+       {
+            nbIterationsSansAmelioration++;
+       } else {
+            nbIterationsSansAmelioration = 0;
+       }
+       if (nbIterationsSansAmelioration == this->m_nbIterationAvantDiversification)
+       {
+           this->firstFit();
+       }
+       this->m_iterationActuelle++;
+        
+
+   }
+   std::cout << "meilleure solution trouve:" << std::endl;
    this->afficherMeilleurSolution();
 }
 
-void RechercheTabou::voisinage() {
+bool RechercheTabou::voisinage(int& index1, int& index2) {
+    int indexRandom = Random::aleatoire(NBR_FORMATIONS);
+    bool trouve = false;
+    int j = 0;
+    while (j<NBR_FORMATIONS && !trouve)
+    {
+        if(j != indexRandom && this->estInversible(indexRandom, j)) {
+            index1 = indexRandom;
+            index2 = j;
+            trouve = true;
+        }
+        j++;
+    }
+    return trouve;
+}
+
+bool RechercheTabou::estInversible(int index1, int index2) {
+
+    if(this->estTabou(index1, index2)) return false;
+
+    Formation* formation1 = &this->m_formations[index1];
+    Interface* interface1 = this->getInterfaceById(this->m_solutionActuelle[formation1->getId()]);
+    Formation* formation2 = &this->m_formations[index2];
+    Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[formation2->getId()]);
+
+    if(!interface1->aCompetance(formation2->getCompetance()) && !interface2->aCompetance(formation1->getCompetance())) {
+        return false;
+    }
+
+    int duree1 = formation1->getHeureFin() - formation1->getHeureDebut();
+    int duree2 = formation2->getHeureFin() - formation2->getHeureDebut();
+
+    int nouvellesHeuresJourInterface1 = interface1->getNombreHeuresParJour(formation2->getJour()) + duree2;
+    int nouvellesHeuresJourInterface2 = interface2->getNombreHeuresParJour(formation1->getJour()) + duree1;
+
+    int nouvellesHeuresParSemaineInterface1 = 
+            interface1->getNombreHeuresTotales() - interface1->getNombreHeuresParJour(formation2->getJour()) + nouvellesHeuresJourInterface1 - duree1;
+    int nouvellesHeuresParSemaineInterface2 = 
+            interface2->getNombreHeuresTotales() - interface2->getNombreHeuresParJour(formation1->getJour()) + nouvellesHeuresJourInterface2 - duree2;
+
+    bool enMemeTemps = false;
+
+    if(formation1->getJour() == formation2->getJour()) {
+        nouvellesHeuresJourInterface1 -= duree1;
+        nouvellesHeuresJourInterface2 -= duree2; 
+        int i= formation1->getHeureDebut();
+        while (i <= formation1->getHeureFin() && !enMemeTemps)
+        {
+            if(i <= formation2->getHeureFin() && i >= formation2->getHeureDebut()) enMemeTemps = true;
+            i++;
+        }
+
+    }
+    if(!enMemeTemps && 
+        (interface1->estOccuppe(formation2->getJour(), formation2->getHeureDebut(), formation2->getHeureFin())
+        || interface2->estOccuppe(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin()))) {
+                
+            return false;
+    }
+    if(nouvellesHeuresJourInterface1 > 8 || nouvellesHeuresParSemaineInterface1 > 35
+           || nouvellesHeuresJourInterface2 > 8 || nouvellesHeuresParSemaineInterface2 > 35) {
+
+            return false;
+    }
+
+    return true;
+}
+
+void RechercheTabou::inverser(int index1, int index2) {
+
+    Formation* formation1 = &this->m_formations[index1];
+    Interface* interface1 = this->getInterfaceById(this->m_solutionActuelle[formation1->getId()]);
+    Formation* formation2 = &this->m_formations[index2];
+    Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[formation2->getId()]);
+
+    interface1->supprimerOccupation(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin());
+    interface1->ajouterOccupation(formation2->getJour(), formation2->getHeureDebut(), formation2->getHeureFin());
+    interface2->supprimerOccupation(formation2->getJour(), formation2->getHeureDebut(), formation2->getHeureFin());
+    interface2->ajouterOccupation(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin());
+
+    int temp = this->m_solutionActuelle[index1];
+    this->m_solutionActuelle[index1] = this->m_solutionActuelle[index2];
+    this->m_solutionActuelle[index2] = temp;
+
+    this->miseAJourListeTabou(index1, index2);
 
 }
+
+bool RechercheTabou::estTabou(int index1, int index2) {
+    return (
+        this->m_listeTabou[index1][index2] > this->m_iterationActuelle ||
+        this->m_listeTabou[index2][index1] > this->m_iterationActuelle
+    );
+}
+
+void RechercheTabou::miseAJourListeTabou(int index1, int index2) {
+    this->m_listeTabou[index1][index2] = this->m_iterationActuelle + this->m_dureeTabou;
+    this->m_listeTabou[index2][index1] = this->m_iterationActuelle + this->m_dureeTabou;
+}
+
 
 /**
  * Algorithme glouton first-fit
@@ -56,40 +195,45 @@ void RechercheTabou::firstFit() {
 
     int id = -1;//id interface trouvee
 
+    for (size_t i = 0; i < this->m_interfaces.size(); i++)
+    {
+        this->m_interfaces[i].viderOccupations();
+    }
+    
 
     for(int i = 0; i < NBR_FORMATION; i++) {
         j = 0;
         trouve = false;
         formation = &this->m_formations[i];
-        duree = formation->getHeureFin() - formation->getHeureDebut();
+        duree = formation->getHeureFin() - formation->getHeureDebut(); //duree de la formation
         id = -1;
-        while(j<NBR_INTERFACES && !trouve) {
-            interface = &this->m_interfaces[j];
-            if (interface->aCompetance(formation->getCompetance()) 
-                && (interface->getNombreHeuresParJour(formation->getJour()) + duree) <= 8
-                && (interface->getNombreHeuresTotales() + duree) <= 35
-                && !interface->estOccuppe(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()) 
+        while(j<NBR_INTERFACES && !trouve) { // tant qu'on trouve pas l'interface qui convient
+            interface = &this->m_interfaces[j]; 
+            if (interface->aCompetance(formation->getCompetance()) // l'interface a la bonne compétance
+                && (interface->getNombreHeuresParJour(formation->getJour()) + duree) <= 8 //l'interface a moins de 8h le jour de la formation
+                && (interface->getNombreHeuresTotales() + duree) <= 35 // l'interface à moins de 35h au total
+                && !interface->estOccuppe(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()) //l'interface n'est pas occupée
             ) {
 
-                trouve = true;
+                trouve = true; // interface trouvee
                 id = interface->getId();
             }
             j++;
         }
         
         this->m_solutionActuelle[formation->getId()] = id;
-        
         if(id != -1) {
-            interface->ajouterOccupation(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin());
+            //on ajoute les heures à l'interface
+            interface->ajouterOccupation(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()); 
         }
-        Random::melangerAleatoirementInterfaces(this->m_interfaces);
+        Random::melangerAleatoirementInterfaces(this->m_interfaces); //on mélange le vector des interfaces
 
         //si l'id est égale à -1 cela signifie qu'aucune formation n'a été trouvé
         //et donc que la solution n'est pas valide
     }
-    
     this->evaluerSolutionActuelle();
     if(this->m_meilleureFitness > this->m_fitnessActuelle) this->nouvelleMeilleureSolution();
+    
 }
 
 
@@ -118,13 +262,6 @@ void RechercheTabou::calculerDistances() {
 }
 
 
-bool RechercheTabou::deplacementEstTabou(int id1, int id2) 
-{
-    return false;
-}
-
-
-
 void RechercheTabou::afficherMeilleurSolution() {
     for(int i=0; i< NBR_FORMATION; i++) {
         std::cout << "formation  " << i << "-> interface " << this->m_meilleureSolution[i] << std::endl;
@@ -140,21 +277,28 @@ void RechercheTabou::evaluerSolutionActuelle() {
     Interface* interface;
     for (int i = 0; i < NBR_FORMATION; i++)
     {
+        
         formation = &this->m_formations[i];
         interface = this->getInterfaceById(this->m_solutionActuelle[i]);
+        // on ajoute la distance entre le dernier centre et l'actuel
         distancesInterface[interface->getId()] += getDistanceEntreCentres(dernierCentre[interface->getId()][formation->getJour()], formation->getCentre());
+        //mise à jour du dernier centre visité
         dernierCentre[interface->getId()][formation->getJour()] = formation->getCentre();
+        //si c'est la dernière formation pour l'interface
         if(interface->estDerniereDeLaJournee(formation->getJour(), formation->getHeureFin())) {
+            //on ajoute la distance entre le dernier centre et le centre SESSAD
             distancesInterface[interface->getId()] += getDistanceEntreCentres(formation->getCentre(), 0);
             dernierCentre[interface->getId()][formation->getJour()] = 0;
         }
-        
+        //si l'interface n'a pas la bonne spécialité
         if(!interface->aSpecialite(formation->getSpecialite())) {
+            //incrémentation de la pénalité
             penalite++;
         }
     }
     float moyenneDeplacement = this->calculerMoyenne(distancesInterface, NBR_INTERFACES);
     float ecartTypeDeplacement = this->calculerEcartType(distancesInterface, NBR_INTERFACES);
+    //objectif
     this->m_fitnessActuelle =  0.5 * (moyenneDeplacement + ecartTypeDeplacement) + 0.5 * this->m_facteurCorrelation * penalite;
 }
 
@@ -185,6 +329,7 @@ float RechercheTabou::calculerEcartType(float* donnees, int taille)
 
     return sqrt(ecartType / taille);
 }
+
 
 float RechercheTabou::getDistanceEntreCentres(int id1, int id2) {
     return this->m_distances[id1][id2];

@@ -44,6 +44,8 @@ class RechercheTabou
        float m_meilleureFitness;
        float m_fitnessActuelle;
 
+       int m_listeTabou[NBR_FORMATION][NBR_FORMATION] = {0};
+
        Formation* getFormationById(int id);
        int getFormationIndexById(int id);
        Interface* getInterfaceById(int id);
@@ -56,9 +58,14 @@ class RechercheTabou
        bool deplacementEstTabou(int id1, int id2);
        float calculerMoyenne(float* donnees, int taille);
        float calculerEcartType(float* donnees, int taille);
-       //algorithmes
+       
+       
        void firstFit();
-       void voisinage();
+       bool voisinage(int& index1, int& index2);
+       bool estTabou(int index1, int index2);
+       void miseAJourListeTabou(int index1, int index2);
+       void inverser(int index1, int index2);
+       bool estInversible(int index1, int index2);
 
        //solution
        void evaluerSolutionActuelle();

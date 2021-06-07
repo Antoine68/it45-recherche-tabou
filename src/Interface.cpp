@@ -14,13 +14,19 @@ Interface::Interface(int id, int competances[2], int specialites[NBR_SPECIALITES
     {
         this->m_occupations[i] = std::vector<int>();
     }
-    
 
 }
 
 Interface::~Interface()
 {
 
+}
+
+void Interface::viderOccupations() {
+    for (int i = 0; i <= 7; i++)
+    {
+        this->m_occupations[i].clear();
+    }
 }
 
 int Interface::getId() {

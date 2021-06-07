@@ -29,6 +29,7 @@ class Interface
         bool estDerniereDeLaJournee(int jour, int heureFin);
         bool estPremiereDeLaJournee(int jour, int heureDebut);
         int getNombreHeuresTotales();
+        void viderOccupations();
         
 
     protected:
