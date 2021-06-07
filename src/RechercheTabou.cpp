@@ -23,6 +23,10 @@ RechercheTabou::~RechercheTabou()
 
 }
 
+/**
+ * Recherche tabou
+ * 
+ */
 void RechercheTabou::rechercher() {
    //on cherche une solution initiale
    this->firstFit();
@@ -68,6 +72,10 @@ void RechercheTabou::rechercher() {
    this->afficherMeilleurSolution();
 }
 
+/**
+ * Cherche deux attributions à inverser dans la solution actuelle.
+ * @return true si une permutation à été trouvé, false sinon.
+ */
 bool RechercheTabou::voisinage(int& index1, int& index2) {
     int indexRandom = Random::aleatoire(NBR_FORMATIONS);
     bool trouve = false;
@@ -84,8 +92,13 @@ bool RechercheTabou::voisinage(int& index1, int& index2) {
     return trouve;
 }
 
+/**
+ * Vérifie si les deux attributions peuvent être inversés.
+ * @return true si les deux attributions sont inversibles, false sinon.
+ */
 bool RechercheTabou::estInversible(int index1, int index2) {
 
+    //si la permutation est dans la liste tabou
     if(this->estTabou(index1, index2)) return false;
 
     Formation* formation1 = &this->m_formations[index1];
@@ -93,6 +106,7 @@ bool RechercheTabou::estInversible(int index1, int index2) {
     Formation* formation2 = &this->m_formations[index2];
     Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[formation2->getId()]);
 
+    //si les interfaces n'ont pas les bonnes competances pour permutter
     if(!interface1->aCompetance(formation2->getCompetance()) && !interface2->aCompetance(formation1->getCompetance())) {
         return false;
     }
@@ -110,10 +124,12 @@ bool RechercheTabou::estInversible(int index1, int index2) {
 
     bool enMemeTemps = false;
 
+    //si les deux formations sont le même jour
     if(formation1->getJour() == formation2->getJour()) {
         nouvellesHeuresJourInterface1 -= duree1;
         nouvellesHeuresJourInterface2 -= duree2; 
         int i= formation1->getHeureDebut();
+        //on regarde si les formations se chevauchent
         while (i <= formation1->getHeureFin() && !enMemeTemps)
         {
             if(i <= formation2->getHeureFin() && i >= formation2->getHeureDebut()) enMemeTemps = true;
@@ -121,12 +137,16 @@ bool RechercheTabou::estInversible(int index1, int index2) {
         }
 
     }
+
+    //si les interfaces sont déjà occupé par une formation autre que celle que l'ont veut inverser
     if(!enMemeTemps && 
         (interface1->estOccuppe(formation2->getJour(), formation2->getHeureDebut(), formation2->getHeureFin())
         || interface2->estOccuppe(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin()))) {
                 
             return false;
     }
+
+    // si les heures de travail ne sont pas dépassées
     if(nouvellesHeuresJourInterface1 > 8 || nouvellesHeuresParSemaineInterface1 > 35
            || nouvellesHeuresJourInterface2 > 8 || nouvellesHeuresParSemaineInterface2 > 35) {
 
@@ -136,6 +156,10 @@ bool RechercheTabou::estInversible(int index1, int index2) {
     return true;
 }
 
+/**
+ * Inverse deux attributions d'une solution et met à jour les heures de chaque interface
+ *
+ */
 void RechercheTabou::inverser(int index1, int index2) {
 
     Formation* formation1 = &this->m_formations[index1];
@@ -143,15 +167,21 @@ void RechercheTabou::inverser(int index1, int index2) {
     Formation* formation2 = &this->m_formations[index2];
     Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[formation2->getId()]);
 
+    //on supprime les heures de l'ancienne formation
     interface1->supprimerOccupation(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin());
+    //on ajoute les heures de la nouvelle formation
     interface1->ajouterOccupation(formation2->getJour(), formation2->getHeureDebut(), formation2->getHeureFin());
+    //on supprime les heures de l'ancienne formation
     interface2->supprimerOccupation(formation2->getJour(), formation2->getHeureDebut(), formation2->getHeureFin());
+    //on ajoute les heures de la nouvelle formation
     interface2->ajouterOccupation(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin());
 
+    //on inverse les affections dans la solution actuelle
     int temp = this->m_solutionActuelle[index1];
     this->m_solutionActuelle[index1] = this->m_solutionActuelle[index2];
     this->m_solutionActuelle[index2] = temp;
 
+    //on met à jour la liste tabou
     this->miseAJourListeTabou(index1, index2);
 
 }
