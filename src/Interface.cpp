@@ -99,3 +99,10 @@ bool Interface::estPremiereDeLaJournee(int jour, int heureDebut) {
     return this->m_occupations[jour][0] == heureDebut;
 }
 
+bool Interface::aPauseMidi(int jour) {
+    for (int i = 12; i < 15; i++)
+    {
+        if (!this->estOccuppe(jour, i, i)) return true;        
+    }
+    return false;
+}

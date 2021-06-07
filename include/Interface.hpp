@@ -30,6 +30,7 @@ class Interface
         bool estPremiereDeLaJournee(int jour, int heureDebut);
         int getNombreHeuresTotales();
         void viderOccupations();
+        bool aPauseMidi(int jour);
         
 
     protected:

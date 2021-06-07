@@ -29,9 +29,7 @@ void RechercheTabou::rechercher() {
    //on cherche une solution initiale
    this->firstFit();
    std::cout << "premiere solution fitness :" << this->m_meilleureFitness << std::endl;
-   //bool descente = false;
    int nbIterationsSansAmelioration = 0;
-   float fitnessAvant, fitnessApres = 0.0;
    int meilleureI, meilleureJ;
    this->m_iterationActuelle = 0;
    while (true)
@@ -53,11 +51,6 @@ void RechercheTabou::rechercher() {
            std::cout << "-> iter: " << this->m_iterationActuelle << ": " << this->m_meilleureFitness << std::endl;
        } 
        
-
-       fitnessAvant = fitnessApres;
-       fitnessApres = this->m_fitnessActuelle;
-       //std::cout << "avant " << fitnessAvant << "après " << fitnessApres << std::endl;
-       //diversification
       
        if (nbIterationsSansAmelioration == this->m_nbIterationAvantDiversification)
        {
@@ -314,7 +307,8 @@ void RechercheTabou::calculerDistances() {
             distanceTotal += this->m_distances[i][j];
         }
     }
-    this->m_facteurCorrelation = distanceTotal/NBR_CENTRES_FORMATION;
+    //diviser par 2 car on a  ij et ji
+    this->m_facteurCorrelation = (distanceTotal/2.0) /NBR_CENTRES_FORMATION;
     
 }
 
@@ -336,7 +330,8 @@ void RechercheTabou::afficherMeilleurSolution() {
 void RechercheTabou::evaluerSolutionActuelle() {
     float distancesInterface[NBR_INTERFACES] = {0.0};
     int dernierCentre[NBR_INTERFACES][7] = {0};
-    float penalite = 0;
+    float penaliteSpecialite = 0;
+    float penalitePause = 0;
     Formation* formation;
     Interface* interface;
     for (int i = 0; i < NBR_FORMATION; i++)
@@ -357,13 +352,27 @@ void RechercheTabou::evaluerSolutionActuelle() {
         //si l'interface n'a pas la bonne spécialité
         if(!interface->aSpecialite(formation->getSpecialite())) {
             //incrémentation de la pénalité
-            penalite++;
+            penaliteSpecialite++;
+        }
+    }
+     //calcul penalite pause d'une heure à midi (entre 12h et 15h)
+    for (int i = 0; i < 7; i++)
+    {
+        for (int j = 0; j < NBR_INTERFACES; j++)
+        {
+            interface = &this->m_interfaces[j];
+            if (!interface->aPauseMidi(i))
+            {
+                penalitePause++;
+            }
+            
         }
     }
     float moyenneDeplacement = this->calculerMoyenne(distancesInterface, NBR_INTERFACES);
     float ecartTypeDeplacement = this->calculerEcartType(distancesInterface, NBR_INTERFACES);
+    //std::cout << penaliteSpecialite << " " << penalitePause << std::endl;
     //objectif
-    this->m_fitnessActuelle =  0.5 * (moyenneDeplacement + ecartTypeDeplacement) + 0.5 * this->m_facteurCorrelation * penalite;
+    this->m_fitnessActuelle =  0.5 * (moyenneDeplacement + ecartTypeDeplacement) + 0.5 * this->m_facteurCorrelation * penaliteSpecialite + (10 * penalitePause);
 }
 
 /**
