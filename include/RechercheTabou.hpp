@@ -19,7 +19,7 @@ class RechercheTabou
 {
     public:
         RechercheTabou(std::vector<Formation>& formations, std::vector<Interface>& interfaces, std::vector<Centre>& centres, 
-                       int dureeTabou, int longueurTabou, int nbIterationAvantDiversification, int dureeRecherche);
+                       int dureeTabou, int nbIterationAvantDiversification, int dureeRecherche);
         virtual ~RechercheTabou();
         void rechercher();
 
@@ -33,7 +33,6 @@ class RechercheTabou
        
        int m_dureeTabou;
        int m_dureeRecherche;
-       int m_longueurTabou;
        int m_nbIterationAvantDiversification;
        int m_iterationActuelle;
        float m_distances[NBR_CENTRES_FORMATION+1][NBR_CENTRES_FORMATION+1];

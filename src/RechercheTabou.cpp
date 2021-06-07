@@ -2,13 +2,12 @@
 
 
 RechercheTabou::RechercheTabou(std::vector<Formation>& formations, std::vector<Interface>& interfaces, std::vector<Centre>& centres, 
-                       int dureeTabou, int longueurTabou, int nbIterationAvantDiversification, int dureeRecherche)
+                       int dureeTabou, int nbIterationAvantDiversification, int dureeRecherche)
 {
     this->m_formations = formations;
     this->m_interfaces = interfaces;
     this->m_centres = centres;
     this->m_dureeTabou = dureeTabou;
-    this->m_longueurTabou = longueurTabou;
     this->m_nbIterationAvantDiversification = nbIterationAvantDiversification;
     this->m_dureeRecherche = dureeRecherche;
     this->m_meilleureFitness = 999999999.0;
@@ -38,7 +37,7 @@ void RechercheTabou::rechercher() {
    float fitnessAvant, fitnessApres = 0.0;
    int meilleureI, meilleureJ;
    this->m_iterationActuelle = 0;
-   while (this->m_iterationActuelle < 5000)
+   while (this->m_iterationActuelle < 50000)
    {
       
        while(!this->voisinage(meilleureI, meilleureJ)) {
@@ -267,6 +266,10 @@ void RechercheTabou::firstFit() {
 }
 
 
+/**
+ * Calcul des distances
+ * 
+ */
 void RechercheTabou::calculerDistances() {
     Centre* centre1;
     Centre* centre2;
@@ -291,7 +294,10 @@ void RechercheTabou::calculerDistances() {
     
 }
 
-
+/**
+ * Affiche la meilleure solution dans le terminal 
+ * 
+ */
 void RechercheTabou::afficherMeilleurSolution() {
     for(int i=0; i< NBR_FORMATION; i++) {
         std::cout << "formation  " << i << "-> interface " << this->m_meilleureSolution[i] << std::endl;
@@ -299,6 +305,10 @@ void RechercheTabou::afficherMeilleurSolution() {
     std::cout << "fitness =  " << this->m_meilleureFitness << std::endl;
 }
 
+/**
+ * Evaluation de la solution actuelle
+ * 
+ */
 void RechercheTabou::evaluerSolutionActuelle() {
     float distancesInterface[NBR_INTERFACES] = {0.0};
     int dernierCentre[NBR_INTERFACES][7] = {0};
@@ -332,6 +342,10 @@ void RechercheTabou::evaluerSolutionActuelle() {
     this->m_fitnessActuelle =  0.5 * (moyenneDeplacement + ecartTypeDeplacement) + 0.5 * this->m_facteurCorrelation * penalite;
 }
 
+/**
+ * Calcul de la moyenne
+ * 
+ */
 float RechercheTabou::calculerMoyenne(float* donnees, int taille)
 {
     int somme = 0, moyenne;
@@ -346,7 +360,10 @@ float RechercheTabou::calculerMoyenne(float* donnees, int taille)
     return moyenne;
 }
 
-
+/**
+ * Calcul de l'écart-type 
+ * 
+ */
 float RechercheTabou::calculerEcartType(float* donnees, int taille)
 {
     int moyenne, ecartType = 0.0;
@@ -361,10 +378,10 @@ float RechercheTabou::calculerEcartType(float* donnees, int taille)
 }
 
 
-float RechercheTabou::getDistanceEntreCentres(int id1, int id2) {
-    return this->m_distances[id1][id2];
-}
-
+/**
+ * La solution actuelle devient la meilleure solution
+ * 
+ */
 void RechercheTabou::nouvelleMeilleureSolution() {
     for(int i=0; i< NBR_FORMATION; i++) {
         this->m_meilleureSolution[i] = this->m_solutionActuelle[i];
@@ -372,6 +389,9 @@ void RechercheTabou::nouvelleMeilleureSolution() {
     this->m_meilleureFitness = this->m_fitnessActuelle;
 }
 
+float RechercheTabou::getDistanceEntreCentres(int id1, int id2) {
+    return this->m_distances[id1][id2];
+}
 
 Formation* RechercheTabou::getFormationById(int id) 
 {
