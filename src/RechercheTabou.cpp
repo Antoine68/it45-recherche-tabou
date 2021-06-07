@@ -37,7 +37,7 @@ void RechercheTabou::rechercher() {
    float fitnessAvant, fitnessApres = 0.0;
    int meilleureI, meilleureJ;
    this->m_iterationActuelle = 0;
-   while (this->m_iterationActuelle < 50000)
+   while (this->m_iterationActuelle < 280)
    {
       
        while(!this->voisinage(meilleureI, meilleureJ)) {
@@ -72,23 +72,40 @@ void RechercheTabou::rechercher() {
 }
 
 /**
- * Cherche deux attributions à inverser dans la solution actuelle.
+ * Cherche les deux meilleures attributions à inverser dans la solution actuelle.
  * @return true si une permutation à été trouvé, false sinon.
  */
 bool RechercheTabou::voisinage(int& index1, int& index2) {
+    //choix premier index aléatoire
     int indexRandom = Random::aleatoire(NBR_FORMATIONS);
-    bool trouve = false;
-    int j = 0;
-    while (j<NBR_FORMATIONS && !trouve)
+    float meilleureFitness = 999999.0;
+    float fitness;
+    int meilleurVoisin = -1;
+    //pour chaque attribution
+    for (int j = 0; j < NBR_FORMATION; j++)
     {
+        //si elles sont inversibles
         if(j != indexRandom && this->estInversible(indexRandom, j)) {
-            index1 = indexRandom;
-            index2 = j;
-            trouve = true;
+            //on regarde si l'inversion est meilleures que les précédentes
+            this->inverser(indexRandom, j);
+            fitness = this->m_fitnessActuelle;
+            this->evaluerSolutionActuelle();
+            //si oui on la marque comme meilleure inversion
+            if(this->m_fitnessActuelle < meilleureFitness) {
+                meilleureFitness = fitness;
+                meilleurVoisin = j;
+            }
+            //on remet la solution actuelle comme elle était avant
+            this->inverser(indexRandom, j);
+            this->m_fitnessActuelle = fitness;
         }
-        j++;
     }
-    return trouve;
+    if(meilleurVoisin != -1) {
+        index1 = indexRandom;
+        index2 = meilleurVoisin;
+        return true;
+    }
+    return false;
 }
 
 /**
