@@ -2,14 +2,13 @@
 
 
 RechercheTabou::RechercheTabou(std::vector<Formation>& formations, std::vector<Interface>& interfaces, std::vector<Centre>& centres, 
-                       int dureeTabou, int nbIterationAvantDiversification, int dureeRecherche)
+                       int dureeTabou, int nbIterationAvantDiversification)
 {
     this->m_formations = formations;
     this->m_interfaces = interfaces;
     this->m_centres = centres;
     this->m_dureeTabou = dureeTabou;
     this->m_nbIterationAvantDiversification = nbIterationAvantDiversification;
-    this->m_dureeRecherche = dureeRecherche;
     this->m_meilleureFitness = 999999999.0;
     this->calculerDistances();
     
@@ -29,15 +28,13 @@ RechercheTabou::~RechercheTabou()
 void RechercheTabou::rechercher() {
    //on cherche une solution initiale
    this->firstFit();
-   std::cout << "premiere solution :" << std::endl;
-   this->afficherMeilleurSolution();
-   std::cout << "----" << std::endl;
+   std::cout << "premiere solution fitness :" << this->m_meilleureFitness << std::endl;
    //bool descente = false;
    int nbIterationsSansAmelioration = 0;
    float fitnessAvant, fitnessApres = 0.0;
    int meilleureI, meilleureJ;
    this->m_iterationActuelle = 0;
-   while (this->m_iterationActuelle < 300)
+   while (true)
    {
       
        while(!this->voisinage(meilleureI, meilleureJ)) {
@@ -46,22 +43,26 @@ void RechercheTabou::rechercher() {
        
        this->inverser(meilleureI, meilleureJ);
        this->evaluerSolutionActuelle();
-       if(this->m_meilleureFitness > this->m_fitnessActuelle) this->nouvelleMeilleureSolution();
+
+
+       nbIterationsSansAmelioration++;
+
+       if(this->m_meilleureFitness > this->m_fitnessActuelle) {
+           this->nouvelleMeilleureSolution();
+           nbIterationsSansAmelioration = 0;
+           std::cout << "-> iter: " << this->m_iterationActuelle << ": " << this->m_meilleureFitness << std::endl;
+       } 
        
 
        fitnessAvant = fitnessApres;
        fitnessApres = this->m_fitnessActuelle;
        //std::cout << "avant " << fitnessAvant << "après " << fitnessApres << std::endl;
        //diversification
-       if (fitnessApres >= fitnessAvant)
-       {
-            nbIterationsSansAmelioration++;
-       } else {
-            nbIterationsSansAmelioration = 0;
-       }
+      
        if (nbIterationsSansAmelioration == this->m_nbIterationAvantDiversification)
        {
-           std::cout << "diver" << std::endl;
+           std::cout << "diversification à " << this->m_iterationActuelle << std::endl;
+           nbIterationsSansAmelioration = 0;
            this->firstFit();
        }
        this->m_iterationActuelle++;

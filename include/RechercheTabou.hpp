@@ -8,6 +8,8 @@
 #include <fstream>
 #include <vector>
 #include <cmath> 
+#include <time.h>
+#include <pthread.h>
 #include "Formation.hpp"
 #include "Interface.hpp"
 #include "Centre.hpp"
@@ -15,13 +17,23 @@
 #include "Random.hpp"
 
 
+#ifdef _WIN32 
+#include <Windows.h>
+#elif  _WIN64
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
+
 class RechercheTabou
 {
     public:
         RechercheTabou(std::vector<Formation>& formations, std::vector<Interface>& interfaces, std::vector<Centre>& centres, 
-                       int dureeTabou, int nbIterationAvantDiversification, int dureeRecherche);
+                       int dureeTabou, int nbIterationAvantDiversification);
         virtual ~RechercheTabou();
         void rechercher();
+        void afficherMeilleurSolution();
 
 
     protected:
@@ -32,7 +44,6 @@ class RechercheTabou
        std::vector<Centre> m_centres;
        
        int m_dureeTabou;
-       int m_dureeRecherche;
        int m_nbIterationAvantDiversification;
        int m_iterationActuelle;
        float m_distances[NBR_CENTRES_FORMATION+1][NBR_CENTRES_FORMATION+1];
@@ -69,7 +80,9 @@ class RechercheTabou
        //solution
        void evaluerSolutionActuelle();
        void nouvelleMeilleureSolution();
-       void afficherMeilleurSolution();
+
+       void chronometre();
+       void finTemps(void* args);
        
 
 

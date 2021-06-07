@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -pthread
 LDFLAGS =
 
 MKDIR = mkdir 
@@ -14,7 +14,9 @@ BINDIR= out/bin
 SRC = $(wildcard $(SRCDIR)/*$(EXT)) 
 OBJ = $(SRC:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
 
+
 all: $(EXEC) run
+
 
 $(EXEC): $(OBJ)
 	@$(MKDIR) -p $(BINDIR)

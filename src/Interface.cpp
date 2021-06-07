@@ -98,3 +98,4 @@ bool Interface::estPremiereDeLaJournee(int jour, int heureDebut) {
     std::sort(this->m_occupations[jour].begin(), this->m_occupations[jour].end());
     return this->m_occupations[jour][0] == heureDebut;
 }
+
