@@ -6,12 +6,13 @@ void Random::randomize()
 };
 
 
-long Random::aleatoire(int borne)
+long Random::aleatoire(long borne)
 {
     return(rand()%borne);
 };
 
 void Random::melangerAleatoirementInterfaces(std::vector<Interface>& interfaces)
 {
+    
     std::random_shuffle(interfaces.begin(), interfaces.end(), Random::aleatoire);
 }

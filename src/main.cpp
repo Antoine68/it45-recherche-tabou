@@ -55,8 +55,15 @@ int main(int argc, char **argv)
     Random::randomize();
 
     int temps;
-    cout << "saisir le temps de calcul en secondes :" << endl;
-    scanf("%d", &temps);
+    if (argc < 2)
+    {
+        cout << "saisir le temps de calcul en secondes :" << endl;
+        scanf("%d", &temps);
+    } else {
+        temps = atoi(argv[1]);
+    }
+    
+    
 
 
     std::vector<Formation> formations;
@@ -77,8 +84,8 @@ int main(int argc, char **argv)
         formations.push_back(*(new Formation(f[0], f[1], f[2], f[3], f[4], f[5], f[1])));
     }
 
-    int dureeTabou = 80;
-    int iterationAvantDiversification = 1000;
+    int dureeTabou = NBR_FORMATIONS/3;
+    int iterationAvantDiversification =  500;
 
     RechercheTabou tabou(formations, interfaces, centres, dureeTabou, iterationAvantDiversification);
 

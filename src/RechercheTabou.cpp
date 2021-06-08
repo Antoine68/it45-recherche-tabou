@@ -36,7 +36,9 @@ void RechercheTabou::rechercher() {
    {
       
        while(!this->voisinage(meilleureI, meilleureJ)) {
+           std::cout << "pas de voisinage à " << this->m_iterationActuelle << std::endl;
            this->firstFit();
+            nbIterationsSansAmelioration = 0;
        }
        
        this->inverser(meilleureI, meilleureJ);
@@ -253,14 +255,16 @@ void RechercheTabou::firstFit() {
         formation = &this->m_formations[i];
         duree = formation->getHeureFin() - formation->getHeureDebut(); //duree de la formation
         id = -1;
+        //std::cout << "form: " << formation->getId() << ": ";
         while(j<NBR_INTERFACES && !trouve) { // tant qu'on trouve pas l'interface qui convient
             interface = &this->m_interfaces[j]; 
+            //std::cout << interface->getId() << ", ";
             if (interface->aCompetance(formation->getCompetance()) // l'interface a la bonne compétance
                 && (interface->getNombreHeuresParJour(formation->getJour()) + duree) <= 8 //l'interface a moins de 8h le jour de la formation
                 && (interface->getNombreHeuresTotales() + duree) <= 35 // l'interface à moins de 35h au total
                 && !interface->estOccuppe(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()) //l'interface n'est pas occupée
             ) {
-
+                
                 trouve = true; // interface trouvee
                 id = interface->getId();
             }
@@ -270,6 +274,7 @@ void RechercheTabou::firstFit() {
         this->m_solutionActuelle[formation->getId()] = id;
         if(id != -1) {
             //on ajoute les heures à l'interface
+            //std::cout << "choisit : " << interface->getId() << std::endl;
             interface->ajouterOccupation(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()); 
         }
         Random::melangerAleatoirementInterfaces(this->m_interfaces); //on mélange le vector des interfaces
@@ -307,8 +312,8 @@ void RechercheTabou::calculerDistances() {
             distanceTotal += this->m_distances[i][j];
         }
     }
-    //diviser par 2 car on a  ij et ji
-    this->m_facteurCorrelation = (distanceTotal/2.0) /NBR_CENTRES_FORMATION;
+    //diviser par 2 car on a ij et ji
+    this->m_facteurCorrelation = (distanceTotal/2.0) / NBR_FORMATIONS;
     
 }
 
@@ -317,9 +322,32 @@ void RechercheTabou::calculerDistances() {
  * 
  */
 void RechercheTabou::afficherMeilleurSolution() {
+    int penalitePause = 0;
+    int penaliteSpecialite = 0;
+    Formation* formation;
+    Interface* interface;
     for(int i=0; i< NBR_FORMATION; i++) {
+        formation = &this->m_formations[i];
+        interface = this->getInterfaceById(this->m_meilleureSolution[i]);
+        if(!interface->aSpecialite(formation->getSpecialite())) {
+            penaliteSpecialite++;
+        }
         std::cout << "formation  " << i << "-> interface " << this->m_meilleureSolution[i] << std::endl;
     }
+    for (int i = 0; i < 7; i++)
+    {
+        for (int j = 0; j < NBR_INTERFACES; j++)
+        {
+            interface = &this->m_interfaces[j];
+            if (!interface->aPauseMidi(i))
+            {
+                penalitePause++;
+            }
+            
+        }
+    }
+    std::cout << "nombre de specialite non respecte =  " << penaliteSpecialite << std::endl;
+    std::cout << "nombre de pause 12h-14h non respecte =  " << penalitePause << std::endl;
     std::cout << "fitness =  " << this->m_meilleureFitness << std::endl;
 }
 
@@ -372,7 +400,7 @@ void RechercheTabou::evaluerSolutionActuelle() {
     float ecartTypeDeplacement = this->calculerEcartType(distancesInterface, NBR_INTERFACES);
     //std::cout << penaliteSpecialite << " " << penalitePause << std::endl;
     //objectif
-    this->m_fitnessActuelle =  0.5 * (moyenneDeplacement + ecartTypeDeplacement) + 0.5 * this->m_facteurCorrelation * penaliteSpecialite + (10 * penalitePause);
+    this->m_fitnessActuelle =  0.5 * (moyenneDeplacement + ecartTypeDeplacement) + 0.5 * this->m_facteurCorrelation * penaliteSpecialite + (penalitePause);
 }
 
 /**
