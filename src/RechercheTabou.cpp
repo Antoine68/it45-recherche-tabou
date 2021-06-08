@@ -230,6 +230,9 @@ void RechercheTabou::miseAJourListeTabou(int index1, int index2) {
  * -> car elles peuvent être choisis pour une compétance alors qu'il
  * n'y a pas assez d'interfaces pour l'autre compétance.
  * -> possibilité de solution non valide.
+ * Il y a donc une vérification de la validité de la solution
+ * à la fin.
+ * 
  */
 void RechercheTabou::firstFit() {
 
@@ -277,16 +280,38 @@ void RechercheTabou::firstFit() {
             //std::cout << "choisit : " << interface->getId() << std::endl;
             interface->ajouterOccupation(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()); 
         }
-        Random::melangerAleatoirementInterfaces(this->m_interfaces); //on mélange le vector des interfaces
+        Random::melangerAleatoirementInterfaces(this->m_interfaces); //on mélange aléatoirement le vector des interfaces
 
-        //si l'id est égale à -1 cela signifie qu'aucune formation n'a été trouvé
-        //et donc que la solution n'est pas valide
+        
     }
-    this->evaluerSolutionActuelle();
-    if(this->m_meilleureFitness > this->m_fitnessActuelle) this->nouvelleMeilleureSolution();
+    //si la solution troouvée est valide on l'évalue
+    if (this->firstFitEstValide())
+    {
+        this->evaluerSolutionActuelle();
+        if(this->m_meilleureFitness > this->m_fitnessActuelle) this->nouvelleMeilleureSolution();
+        return;
+    }
+    //sinon on refait un first fit
+    this->firstFit();
+    
     
 }
 
+
+/**
+ * Vérifie si la solution actuelle est valide
+ * après le passage dans le first fit
+ * 
+ */
+bool RechercheTabou::firstFitEstValide() {
+    for (int i = 0; i < NBR_FORMATIONS; i++)
+    {
+        //si l'id est égale à -1 cela signifie qu'aucune formation n'a été trouvé
+        //et donc que la solution n'est pas valide
+        if(this->m_solutionActuelle[i] == -1) return false;
+    }
+    return true;
+}
 
 /**
  * Calcul des distances

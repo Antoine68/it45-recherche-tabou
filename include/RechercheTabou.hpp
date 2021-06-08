@@ -71,6 +71,7 @@ class RechercheTabou
        
        
        void firstFit();
+       bool firstFitEstValide();
        bool voisinage(int& index1, int& index2);
        bool estTabou(int index1, int index2);
        void miseAJourListeTabou(int index1, int index2);
