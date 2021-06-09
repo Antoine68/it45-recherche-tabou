@@ -39,7 +39,7 @@ class Interface
        int m_id;
        int m_competances[2];
        int m_specialites[NBR_SPECIALITES];
-       std::map<int, std::vector<int>> m_occupations;
+       std::map<int, std::vector<int>> m_occupations; //hash map des heures par jour de l'interface
 };
 
 #endif // INTERFACE_H

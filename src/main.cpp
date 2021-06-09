@@ -38,12 +38,9 @@ void chronometre(int secondes, RechercheTabou* tabou) {
     sleep(secondes);
     #endif
 
-    cout << "-------fin temps-------" << endl;
-    cout << "meilleure solution trouve:" << endl;
+    tabou->arreterRecherche();
 
-    tabou->afficherMeilleurSolution();
-
-    exit(0);
+    return;
 
 }
 
@@ -90,8 +87,10 @@ int main(int argc, char **argv)
     RechercheTabou tabou(formations, interfaces, centres, dureeTabou, iterationAvantDiversification);
 
     std::thread chrono(chronometre, temps, &tabou);
+    chrono.detach();
 
     tabou.rechercher();
+
 
     
     return 0;

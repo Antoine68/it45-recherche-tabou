@@ -33,6 +33,7 @@ class RechercheTabou
                        int dureeTabou, int nbIterationAvantDiversification);
         virtual ~RechercheTabou();
         void rechercher();
+        void arreterRecherche();
         void afficherMeilleurSolution();
 
 
@@ -48,6 +49,11 @@ class RechercheTabou
        int m_iterationActuelle;
        float m_distances[NBR_CENTRES_FORMATION+1][NBR_CENTRES_FORMATION+1];
        float m_facteurCorrelation;
+       int m_penaliteSpecialiteMeilleureSolution;
+       int m_penalitePauseMeilleureSolution;
+       float m_moyenneDeplacementMeilleureSolution;
+       float m_ecartTypeDeplacmentMeilleureSolution;
+       bool m_boucler;
 
        int m_meilleureSolution[NBR_FORMATIONS] = {-1};
        int m_solutionActuelle[NBR_FORMATIONS] = {-1};

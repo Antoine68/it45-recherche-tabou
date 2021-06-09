@@ -58,14 +58,14 @@ bool Interface::estOccuppe(int jour, int heureDebut, int heureFin) {
 }
 
 void Interface::ajouterOccupation(int jour, int heureDebut, int heureFin) {
-    for (int i = heureDebut; i <= heureFin; i++)
+    for (int i = heureDebut; i < heureFin; i++)
     {
         this->m_occupations[jour].push_back(i);
     }
 }
 
 void Interface::supprimerOccupation(int jour, int heureDebut, int heureFin) {
-    for (int i = heureDebut; i <= heureFin; i++)
+    for (int i = heureDebut; i < heureFin; i++)
     {
         this->m_occupations[jour].erase(std::remove(this->m_occupations[jour].begin(), this->m_occupations[jour].end(), i), this->m_occupations[jour].end());   
     }
