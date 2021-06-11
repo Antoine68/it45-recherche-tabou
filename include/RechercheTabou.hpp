@@ -49,15 +49,20 @@ class RechercheTabou
        int m_iterationActuelle;
        float m_distances[NBR_CENTRES_FORMATION+1][NBR_CENTRES_FORMATION+1];
        float m_facteurCorrelation;
+       bool m_boucler;
+
+       int m_meilleureSolution[NBR_FORMATIONS] = {-1};
        int m_penaliteSpecialiteMeilleureSolution;
        int m_penalitePauseMeilleureSolution;
        float m_moyenneDeplacementMeilleureSolution;
        float m_ecartTypeDeplacmentMeilleureSolution;
-       bool m_boucler;
-
-       int m_meilleureSolution[NBR_FORMATIONS] = {-1};
-       int m_solutionActuelle[NBR_FORMATIONS] = {-1};
        float m_meilleureFitness;
+
+       int m_solutionActuelle[NBR_FORMATIONS] = {-1};
+       int m_penaliteSpecialiteSolutionActuelle;
+       int m_penalitePauseSolutionActuelle;
+       float m_moyenneDeplacementSolutionActuelle;
+       float m_ecartTypeDeplacmentSolutionActuelle;
        float m_fitnessActuelle;
 
        int m_listeTabou[NBR_FORMATION][NBR_FORMATION] = {0};
