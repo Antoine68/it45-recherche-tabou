@@ -22,6 +22,7 @@ class Formation
         int getHeureFin();
         int getSpecialite();
         int getCentre();
+        bool operator<(const Formation& formation) const;
         
  
     protected:

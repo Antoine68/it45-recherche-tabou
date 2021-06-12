@@ -27,7 +27,6 @@ class Interface
         void supprimerOccupation(int jour, int heureDebut, int heureFin);
         int getNombreHeuresParJour(int jour);
         bool estDerniereDeLaJournee(int jour, int heureFin);
-        bool estPremiereDeLaJournee(int jour, int heureDebut);
         int getNombreHeuresTotales();
         void viderOccupations();
         bool aPauseMidi(int jour);

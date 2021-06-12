@@ -61,8 +61,6 @@ int main(int argc, char **argv)
     }
     
     
-
-
     std::vector<Formation> formations;
     std::vector<Interface> interfaces;
     std::vector<Centre> centres;
@@ -78,11 +76,11 @@ int main(int argc, char **argv)
     }
     for (size_t k = 0; k< NBR_FORMATION; k++) {
         int* f = formation[k];
-        formations.push_back(*(new Formation(f[0], f[1], f[2], f[3], f[4], f[5], f[1])));
+        formations.push_back(*(new Formation(f[0], f[1], f[2], f[3], f[4], f[5], f[1]+1)));
     }
 
     int dureeTabou = NBR_FORMATIONS/3;
-    int iterationAvantDiversification =  500;
+    int iterationAvantDiversification =  50;
 
     RechercheTabou tabou(formations, interfaces, centres, dureeTabou, iterationAvantDiversification);
 
@@ -92,6 +90,5 @@ int main(int argc, char **argv)
     tabou.rechercher();
 
 
-    
     return 0;
 }

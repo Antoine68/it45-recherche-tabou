@@ -94,13 +94,9 @@ bool Interface::estDerniereDeLaJournee(int jour, int heureFin) {
     {
         if(derniereHeure < this->m_occupations[jour][i]) derniereHeure = this->m_occupations[jour][i];
     }
-    return derniereHeure == heureFin;
+    return derniereHeure == heureFin-1;
 }
 
-bool Interface::estPremiereDeLaJournee(int jour, int heureDebut) {
-    std::sort(this->m_occupations[jour].begin(), this->m_occupations[jour].end());
-    return this->m_occupations[jour][0] == heureDebut;
-}
 
 bool Interface::aPauseMidi(int jour) {
     for (int i = 12; i < 15; i++)

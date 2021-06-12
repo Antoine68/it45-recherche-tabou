@@ -46,4 +46,17 @@ int Formation::getCentre() {
     return this->m_centre;
 }
 
+bool Formation::operator<(const Formation& formation) const {
+    if(this->m_jour != formation.m_jour) {
+        return this->m_jour < formation.m_jour;
+    }
+    if(this->m_heureDebut != formation.m_heureDebut) {
+        return this->m_heureDebut < formation.m_heureDebut;
+    }
+    if(this->m_heureFin != formation.m_heureFin) {
+        return this->m_heureFin < formation.m_heureFin;
+    }
+    return false;
+}
+
 

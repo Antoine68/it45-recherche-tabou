@@ -4,7 +4,10 @@
 RechercheTabou::RechercheTabou(std::vector<Formation>& formations, std::vector<Interface>& interfaces, std::vector<Centre>& centres, 
                        int dureeTabou, int nbIterationAvantDiversification)
 {
+    
     this->m_formations = formations;
+    //on trie les formations pour qu'elles soient dans l'ordre croissant des jours et des heures
+    std::sort(this->m_formations.begin(), this->m_formations.end());
     this->m_interfaces = interfaces;
     this->m_centres = centres;
     this->m_dureeTabou = dureeTabou;
@@ -31,24 +34,29 @@ void RechercheTabou::rechercher() {
    std::cout << "premiere solution :" <<  std::endl;
    this->afficherMeilleurSolution();
    int nbIterationsSansAmelioration = 0;
-   int meilleureI, meilleureJ;
+   int meilleureId1, meilleureId2;
    this->m_iterationActuelle = 0;
    this->m_boucler = true;
-   std::cout << "--Début boucle recherche tabou--" <<  std::endl;
+   int nbIterationDiversiteActuellle = 0;
+   int nbIterationMeilleure = 0;
+   std::cout << "-------Début recherche tabou-------" <<  std::endl;
    while (this->m_boucler)
    {
       
-       while(!this->voisinage(meilleureI, meilleureJ)) {
+       while(!this->voisinage(meilleureId1, meilleureId2)) {
            //std::cout << "pas de voisinage à " << this->m_iterationActuelle << std::endl;
            this->firstFit();
-            nbIterationsSansAmelioration = 0;
+           nbIterationsSansAmelioration = 0;
+           nbIterationMeilleure = (nbIterationMeilleure > nbIterationDiversiteActuellle) ? nbIterationMeilleure : nbIterationDiversiteActuellle;
+           nbIterationDiversiteActuellle = 0;
        }
-       
-       this->inverser(meilleureI, meilleureJ);
+       //std::cout << "choisi" << meilleureId1<< " " << meilleureId2 << std::endl;
+       this->inverser(meilleureId1, meilleureId2);
        this->evaluerSolutionActuelle();
 
 
        nbIterationsSansAmelioration++;
+       nbIterationDiversiteActuellle++;
 
        if(this->m_meilleureFitness > this->m_fitnessActuelle) {
            this->nouvelleMeilleureSolution();
@@ -57,17 +65,20 @@ void RechercheTabou::rechercher() {
        } 
        
       
-       if (nbIterationsSansAmelioration == this->m_nbIterationAvantDiversification)
+       if (nbIterationsSansAmelioration >= this->m_nbIterationAvantDiversification && nbIterationDiversiteActuellle >= nbIterationMeilleure)
        {
            //std::cout << "diversification à " << this->m_iterationActuelle << std::endl;
            nbIterationsSansAmelioration = 0;
+           nbIterationMeilleure = (nbIterationMeilleure > nbIterationDiversiteActuellle - this->m_nbIterationAvantDiversification) ? 
+                                            nbIterationMeilleure : (nbIterationDiversiteActuellle - this->m_nbIterationAvantDiversification);
+           nbIterationDiversiteActuellle = 0;
            this->firstFit();
        }
        this->m_iterationActuelle++;
         
 
    }
-   std::cout << "-------fin temps-------" << std::endl;
+   std::cout << "-------Fin recherche tabou-------" << std::endl;
    std::cout << "meilleure solution trouve:" << std::endl;
    this->afficherMeilleurSolution();
 }
@@ -80,7 +91,7 @@ void RechercheTabou::arreterRecherche() {
  * Cherche les deux meilleures attributions à inverser dans la solution actuelle.
  * @return true si une permutation à été trouvé, false sinon.
  */
-bool RechercheTabou::voisinage(int& index1, int& index2) {
+bool RechercheTabou::voisinage(int& id1, int& id2) {
     //choix premier index aléatoire
     //int indexRandom = Random::aleatoire(NBR_FORMATIONS);
     float meilleureFitness = 999999.0;
@@ -111,8 +122,8 @@ bool RechercheTabou::voisinage(int& index1, int& index2) {
         }
     }
     if(meilleurVoisin1 != -1 && meilleurVoisin1 != -1) {
-        index1 = meilleurVoisin1;
-        index2 = meilleurVoisin2;
+        id1 = meilleurVoisin1;
+        id2 = meilleurVoisin2;
         return true;
     }
     return false;
@@ -122,20 +133,22 @@ bool RechercheTabou::voisinage(int& index1, int& index2) {
  * Vérifie si les deux attributions peuvent être inversés.
  * @return true si les deux attributions sont inversibles, false sinon.
  */
-bool RechercheTabou::estInversible(int index1, int index2) {
+bool RechercheTabou::estInversible(int id1, int id2) {
 
     //si la permutation est dans la liste tabou
-    if(this->estTabou(index1, index2)) return false;
+    if(this->estTabou(id1, id2)) return false;
 
-    Formation* formation1 = &this->m_formations[index1];
-    Interface* interface1 = this->getInterfaceById(this->m_solutionActuelle[formation1->getId()]);
-    Formation* formation2 = &this->m_formations[index2];
-    Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[formation2->getId()]);
-
+    Formation* formation1 = this->getFormationById(id1);
+    Interface* interface1 = this->getInterfaceById(this->m_solutionActuelle[id1]);
+    Formation* formation2 = this->getFormationById(id2);
+    Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[id2]);
+    //std::cout << formation1->getId() << " " << interface1->getId() << "/" << formation2->getId() << " " << interface2->getId();
     //si les interfaces n'ont pas les bonnes competances pour permutter
-    if(!interface1->aCompetance(formation2->getCompetance()) && !interface2->aCompetance(formation1->getCompetance())) {
+    if(!interface1->aCompetance(formation2->getCompetance()) || !interface2->aCompetance(formation1->getCompetance())) {
+        //std::cout << "faux" << std::endl;
         return false;
     }
+    //std::cout << std::endl;
 
     int duree1 = formation1->getHeureFin() - formation1->getHeureDebut();
     int duree2 = formation2->getHeureFin() - formation2->getHeureDebut();
@@ -186,12 +199,12 @@ bool RechercheTabou::estInversible(int index1, int index2) {
  * Inverse deux attributions d'une solution et met à jour les heures de chaque interface
  *
  */
-void RechercheTabou::inverser(int index1, int index2) {
+void RechercheTabou::inverser(int id1, int id2) {
 
-    Formation* formation1 = &this->m_formations[index1];
-    Interface* interface1 = this->getInterfaceById(this->m_solutionActuelle[formation1->getId()]);
-    Formation* formation2 = &this->m_formations[index2];
-    Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[formation2->getId()]);
+    Formation* formation1 = this->getFormationById(id1);
+    Interface* interface1 = this->getInterfaceById(this->m_solutionActuelle[id1]);
+    Formation* formation2 = this->getFormationById(id2);
+    Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[id2]);
 
     //on supprime les heures de l'ancienne formation
     interface1->supprimerOccupation(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin());
@@ -203,25 +216,25 @@ void RechercheTabou::inverser(int index1, int index2) {
     interface2->ajouterOccupation(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin());
 
     //on inverse les affections dans la solution actuelle
-    int temp = this->m_solutionActuelle[index1];
-    this->m_solutionActuelle[index1] = this->m_solutionActuelle[index2];
-    this->m_solutionActuelle[index2] = temp;
+    int temp = this->m_solutionActuelle[id1];
+    this->m_solutionActuelle[id1] = this->m_solutionActuelle[id2];
+    this->m_solutionActuelle[id2] = temp;
 
     //on met à jour la liste tabou
-    this->miseAJourListeTabou(index1, index2);
+    this->miseAJourListeTabou(id1, id2);
 
 }
 
-bool RechercheTabou::estTabou(int index1, int index2) {
+bool RechercheTabou::estTabou(int id1, int id2) {
     return (
-        this->m_listeTabou[index1][index2] > this->m_iterationActuelle ||
-        this->m_listeTabou[index2][index1] > this->m_iterationActuelle
+        this->m_listeTabou[id1][id2] > this->m_iterationActuelle ||
+        this->m_listeTabou[id2][id1] > this->m_iterationActuelle
     );
 }
 
-void RechercheTabou::miseAJourListeTabou(int index1, int index2) {
-    this->m_listeTabou[index1][index2] = this->m_iterationActuelle + this->m_dureeTabou;
-    this->m_listeTabou[index2][index1] = this->m_iterationActuelle + this->m_dureeTabou;
+void RechercheTabou::miseAJourListeTabou(int id1, int id2) {
+    this->m_listeTabou[id1][id2] = this->m_iterationActuelle + this->m_dureeTabou;
+    this->m_listeTabou[id2][id1] = this->m_iterationActuelle + this->m_dureeTabou;
 }
 
 
@@ -340,6 +353,7 @@ void RechercheTabou::calculerDistances() {
                
             }
             distanceTotal += this->m_distances[i][j];
+            //std::cout << i << " " << j << ": " << this->m_distances[i][j] << std::endl;
         }
     }
     //diviser par 2 car on a ij et ji
@@ -379,15 +393,18 @@ void RechercheTabou::evaluerSolutionActuelle() {
     {
         
         formation = &this->m_formations[i];
-        interface = this->getInterfaceById(this->m_solutionActuelle[i]);
+        interface = this->getInterfaceById(this->m_solutionActuelle[formation->getId()]);
         // on ajoute la distance entre le dernier centre et l'actuel
         distancesInterface[interface->getId()] += getDistanceEntreCentres(dernierCentre[interface->getId()][formation->getJour()], formation->getCentre());
+        //std::cout << "interface" << interface->getId() << ": j"<< formation->getJour() << " de " << dernierCentre[interface->getId()][formation->getJour()] << " à " << formation->getCentre() << " -> +" << getDistanceEntreCentres(dernierCentre[interface->getId()][formation->getJour()], formation->getCentre()) << std::endl;
         //mise à jour du dernier centre visité
         dernierCentre[interface->getId()][formation->getJour()] = formation->getCentre();
         //si c'est la dernière formation pour l'interface
+        
         if(interface->estDerniereDeLaJournee(formation->getJour(), formation->getHeureFin())) {
             //on ajoute la distance entre le dernier centre et le centre SESSAD
             distancesInterface[interface->getId()] += getDistanceEntreCentres(formation->getCentre(), 0);
+            //std::cout << "interface" << interface->getId() << ": j"<< formation->getJour() << " de " << dernierCentre[interface->getId()][formation->getJour()] << " à " << 0 << " -> +" << getDistanceEntreCentres(dernierCentre[interface->getId()][formation->getJour()], 0) << std::endl;
             dernierCentre[interface->getId()][formation->getJour()] = 0;
         }
         //si l'interface n'a pas la bonne spécialité
@@ -485,17 +502,6 @@ Formation* RechercheTabou::getFormationById(int id)
 }
 
 
-int RechercheTabou::getFormationIndexById(int id) 
-{
-    
-    for (size_t i = 0; i < this->m_formations.size(); i++)
-    {
-        if (this->m_formations[i].getId() == id) return i;
-    }
-    return -1;
-}
-
-
 Interface* RechercheTabou::getInterfaceById(int id) 
 {
     for (size_t i = 0; i < this->m_interfaces.size(); i++)
@@ -505,15 +511,6 @@ Interface* RechercheTabou::getInterfaceById(int id)
     return nullptr;
 }
 
-int RechercheTabou::getInterfaceIndexById(int id) 
-{
-    for (size_t i = 0; i < this->m_interfaces.size(); i++)
-    {
-        if (this->m_interfaces[i].getId() == id) return i;
-    }
-    return -1;
-}
-
 Centre* RechercheTabou::getCentreById(int id) 
 {
     for (size_t i = 0; i < this->m_centres.size(); i++)
@@ -521,15 +518,6 @@ Centre* RechercheTabou::getCentreById(int id)
         if (this->m_centres[i].getId() == id) return &this->m_centres[i];
     }
     return nullptr;
-}
-
-int RechercheTabou::getCentreIndexById(int id) 
-{
-    for (size_t i = 0; i < this->m_centres.size(); i++)
-    {
-        if (this->m_centres[i].getId() == id) return i;
-    }
-    return -1;
 }
 
 

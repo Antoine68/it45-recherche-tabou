@@ -68,11 +68,8 @@ class RechercheTabou
        int m_listeTabou[NBR_FORMATION][NBR_FORMATION] = {0};
 
        Formation* getFormationById(int id);
-       int getFormationIndexById(int id);
        Interface* getInterfaceById(int id);
-       int getInterfaceIndexById(int id);
        Centre* getCentreById(int id);
-       int getCentreIndexById(int id);
        void calculerDistances();
        float getDistanceEntreCentres(int id1, int id2);
        Centre* getFormationCentre(int idFormation);
