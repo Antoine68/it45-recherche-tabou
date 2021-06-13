@@ -22,6 +22,10 @@ Interface::~Interface()
 
 }
 
+/**
+ * Supprimer toutes les occupations de l'interface 
+ * 
+ */
 void Interface::viderOccupations() {
     for (int i = 0; i <= 7; i++)
     {
@@ -41,6 +45,10 @@ bool Interface::aSpecialite(int specialite) {
     return this->m_specialites[specialite] == 1;
 }
 
+/**
+ * 
+ * @return true si l'interface a les deux compétances (codage et signe)
+ */
 bool Interface::aToutesCompetances() {
     for (int i = 0; i < 2; i++)
     {
@@ -49,7 +57,11 @@ bool Interface::aToutesCompetances() {
     return true;    
 }
 
-bool Interface::estOccuppe(int jour, int heureDebut, int heureFin) {
+/**
+ * Verifie si l'interface est occupé au moment passé en paramètre
+ * @return true si elle est occupé, false sinon
+ */
+bool Interface::estOccupe(int jour, int heureDebut, int heureFin) {
     //std::cout << heureDebut << "-" << heureFin << ":";
     for (int i = heureDebut; i <= heureFin; i++)
     {
@@ -60,6 +72,11 @@ bool Interface::estOccuppe(int jour, int heureDebut, int heureFin) {
     return false;
 }
 
+/**
+ * Ajoute l'intervalle d'heure entre heureDebut (inclus)
+ * et heureFin (exclus) à l'occupation du jour passé en paramètre
+ * 
+ */
 void Interface::ajouterOccupation(int jour, int heureDebut, int heureFin) {
     for (int i = heureDebut; i < heureFin; i++)
     {
@@ -67,6 +84,11 @@ void Interface::ajouterOccupation(int jour, int heureDebut, int heureFin) {
     }
 }
 
+/**
+ * Supprime l'intervalle d'heure entre heureDebut (inclus)
+ * et heureFin (exclus) à l'occupation du jour passé en paramètre
+ * 
+ */
 void Interface::supprimerOccupation(int jour, int heureDebut, int heureFin) {
     for (int i = heureDebut; i < heureFin; i++)
     {
@@ -74,10 +96,18 @@ void Interface::supprimerOccupation(int jour, int heureDebut, int heureFin) {
     }
 }
 
+/**
+ * 
+ * @return le nombre d'heures du jour passé en paramètre
+ */
 int Interface::getNombreHeuresParJour(int jour) {
     return this->m_occupations[jour].size();
 }
 
+/**
+ * 
+ * @return le nombre d'heures de la semaine de l'interface
+ */
 int Interface::getNombreHeuresTotales() {
     int total = 0;
     for (int i = 0; i < 7; i++)
@@ -88,6 +118,11 @@ int Interface::getNombreHeuresTotales() {
     
 }
 
+/**
+ * Verifie si l'heure de fin passée en paramètre est la dernière de 
+ * la journée passé en paramètre
+ * @return true si c'est la dernière, false sinon
+ */
 bool Interface::estDerniereDeLaJournee(int jour, int heureFin) {
     int derniereHeure = 0;
     for (size_t i = 0; i < this->m_occupations[jour].size(); i++)
@@ -97,11 +132,14 @@ bool Interface::estDerniereDeLaJournee(int jour, int heureFin) {
     return derniereHeure == heureFin-1;
 }
 
-
+/**
+ * Verifie si l'interface à une pause entre 12h et 14h
+ * @return true s'il a une pause, false sinon
+ */
 bool Interface::aPauseMidi(int jour) {
     for (int i = 12; i < 15; i++)
     {
-        if (!this->estOccuppe(jour, i, i)) return true;        
+        if (!this->estOccupe(jour, i, i)) return true;        
     }
     std::cout << "la" << std::endl;
     return false;

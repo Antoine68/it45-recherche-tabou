@@ -1,5 +1,7 @@
 # it45-recherche-tabou
 
+dépot GitHub : [https://github.com/Antoine68/it45-recherche-tabou](https://github.com/Antoine68/it45-recherche-tabou)
+
 ## Compilation
 
 pour compiler le projet il faut effectuer la commande `./build` sur un terminal linux à la racine du projet. Cette commande créera un dossier `out` qui contient les `.o` et l'exécutable du projet.

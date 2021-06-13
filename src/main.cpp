@@ -30,11 +30,11 @@ void chronometre(int secondes, RechercheTabou* tabou) {
 
     cout << endl << "-------début chronometre " << secondes << "s-------" << endl;
 
-    #ifdef _WIN32  //pour windows (pas les meme bibliotheque et fonctions a utiliser)
+    #ifdef _WIN32
     Sleep(secondes*1000);
-    #elif _WIN64  //pour windows (pas les meme bibliotheque et fonctions a utiliser)
+    #elif _WIN64 
     Sleep(secondes*1000);
-    #else //pour le reste
+    #else
     sleep(secondes);
     #endif
 
@@ -65,28 +65,41 @@ int main(int argc, char **argv)
     std::vector<Interface> interfaces;
     std::vector<Centre> centres;
     
-    
+    //création des interfaces
     for (size_t i = 0; i < NBR_INTERFACES; i++)
     {
         interfaces.push_back(*(new Interface(i,competences_interfaces[i], specialite_interfaces[i])));
     }
+
+    //création des centres
+    //le centre avec l'id 0 sera le centre SESSAD
     for (size_t j = 0; j < NBR_SPECIALITES+1; j++)
     {
         centres.push_back(*(new Centre(j, coord[j], j-1)));
     }
+
+    //création des formations
+    //on fait id du centre + 1 pour ne pas les attribuer au centre SESSAD
     for (size_t k = 0; k< NBR_FORMATION; k++) {
         int* f = formation[k];
         formations.push_back(*(new Formation(f[0], f[1], f[2], f[3], f[4], f[5], f[1]+1)));
     }
 
-    int dureeTabou = NBR_FORMATIONS/3;
-    int iterationAvantDiversification =  250;
+    //parametre durée tabou
+    int dureeTabou = 15;
 
+    //paramètre iteration avant diversification
+    int iterationAvantDiversification =  1000;
+
+    //création recherche tabou
     RechercheTabou tabou(formations, interfaces, centres, dureeTabou, iterationAvantDiversification);
 
+    //création et démarrage du thread chrono qui va arreter la recherche quand le 
+    //temps imparti s'est écoulé
     std::thread chrono(chronometre, temps, &tabou);
     chrono.detach();
 
+    //on démarre la recherche
     tabou.rechercher();
 
 

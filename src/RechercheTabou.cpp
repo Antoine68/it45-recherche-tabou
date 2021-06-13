@@ -74,7 +74,7 @@ void RechercheTabou::rechercher() {
             //  2. si la nouvelle solution est identique à l'ancienne
             //         et que c'est la première fois que cela se produit
            if(((fitnessAvant < fitnessApres) && descente) || ((fitnessAvant == fitnessApres)&&(first))) {
-                std::cout << "minimum local-> iter: " << this->m_iterationActuelle-1 << ": " << fitnessAvant << std::endl;
+                //std::cout << "minimum local-> iter: " << this->m_iterationActuelle-1 << ": " << fitnessAvant << std::endl;
            }
            if (fitnessAvant<=fitnessApres)  // la solution courente se dégrade
 	            descente = false;
@@ -205,8 +205,8 @@ bool RechercheTabou::estInversible(int id1, int id2) {
 
     //si les interfaces sont déjà occupé par une formation autre que celle que l'ont veut inverser
     if(!enMemeTemps && 
-        (interface1->estOccuppe(formation2->getJour(), formation2->getHeureDebut(), formation2->getHeureFin())
-        || interface2->estOccuppe(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin()))) {
+        (interface1->estOccupe(formation2->getJour(), formation2->getHeureDebut(), formation2->getHeureFin())
+        || interface2->estOccupe(formation1->getJour(), formation1->getHeureDebut(), formation1->getHeureFin()))) {
                 
             return false;
     }
@@ -252,15 +252,11 @@ void RechercheTabou::inverser(int id1, int id2) {
 }
 
 bool RechercheTabou::estTabou(int id1, int id2) {
-    return (
-        this->m_listeTabou[id1][id2] > this->m_iterationActuelle ||
-        this->m_listeTabou[id2][id1] > this->m_iterationActuelle
-    );
+    return this->m_listeTabou[id1][id2] > this->m_iterationActuelle;
 }
 
 void RechercheTabou::miseAJourListeTabou(int id1, int id2) {
     this->m_listeTabou[id1][id2] = this->m_iterationActuelle + this->m_dureeTabou;
-    this->m_listeTabou[id2][id1] = this->m_iterationActuelle + this->m_dureeTabou;
 }
 
 
@@ -310,7 +306,7 @@ void RechercheTabou::firstFit() {
             if (interface->aCompetance(formation->getCompetance()) // l'interface a la bonne compétance
                 && (interface->getNombreHeuresParJour(formation->getJour()) + duree) <= 8 //l'interface a moins de 8h le jour de la formation
                 && (interface->getNombreHeuresTotales() + duree) <= 35 // l'interface à moins de 35h au total
-                && !interface->estOccuppe(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()) //l'interface n'est pas occupée
+                && !interface->estOccupe(formation->getJour(), formation->getHeureDebut(), formation->getHeureFin()) //l'interface n'est pas occupée
             ) {
                 
                 trouve = true; // interface trouvee
