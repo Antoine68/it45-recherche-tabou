@@ -4,9 +4,9 @@
 
 #include <stdio.h>
                   
-#define NBR_INTERFACES        48
-#define NBR_APPRENANTS        160
-#define NBR_FORMATIONS        160
+#define NBR_INTERFACES        24
+#define NBR_APPRENANTS        80
+#define NBR_FORMATIONS        80
 #define NBR_CENTRES_FORMATION 5
 #define NBR_SPECIALITES       5
 #define NBR_NODES 	      NBR_CENTRES_FORMATION+NBR_INTERFACES+NBR_APPRENANTS
@@ -20,7 +20,7 @@
 #define SPECIALITE_MECANIQUE 2
 #define SPECIALITE_INFORMATIQUE 3
 #define SPECIALITE_CUISINE 4
-#define NBR_FORMATION          160
+#define NBR_FORMATION          80
                   
 #define LUNDI                  1
 #define MARDI                  2

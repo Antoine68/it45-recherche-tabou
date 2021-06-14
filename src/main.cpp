@@ -89,7 +89,7 @@ int main(int argc, char **argv)
     int dureeTabou = 15;
 
     //paramètre iteration avant diversification
-    int iterationAvantDiversification =  1000;
+    int iterationAvantDiversification =  250;
 
     //création recherche tabou
     RechercheTabou tabou(formations, interfaces, centres, dureeTabou, iterationAvantDiversification);
