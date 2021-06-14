@@ -62,13 +62,10 @@ bool Interface::aToutesCompetances() {
  * @return true si elle est occupé, false sinon
  */
 bool Interface::estOccupe(int jour, int heureDebut, int heureFin) {
-    //std::cout << heureDebut << "-" << heureFin << ":";
     for (int i = heureDebut; i <= heureFin; i++)
     {
-        //std::cout << i << " ";
         if(std::find(this->m_occupations[jour].begin(), this->m_occupations[jour].end(), i) != this->m_occupations[jour].end()) return true;
     }
-    //std::cout << std::endl;
     return false;
 }
 
@@ -141,6 +138,5 @@ bool Interface::aPauseMidi(int jour) {
     {
         if (!this->estOccupe(jour, i, i)) return true;        
     }
-    std::cout << "la" << std::endl;
     return false;
 }

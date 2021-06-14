@@ -31,7 +31,7 @@ RechercheTabou::~RechercheTabou()
 void RechercheTabou::rechercher() {
    //on cherche une solution initiale
    this->firstFit();
-   std::cout << "premiere solution :" <<  std::endl;
+   std::cout << "première solution :" <<  std::endl;
    this->afficherMeilleurSolution();
    int nbIterationsSansAmelioration = 0;
    int meilleureId1, meilleureId2;
@@ -125,8 +125,6 @@ void RechercheTabou::arreterRecherche() {
  * @return true si une permutation à été trouvé, false sinon.
  */
 bool RechercheTabou::voisinage(int& id1, int& id2) {
-    //choix premier index aléatoire
-    //int indexRandom = Random::aleatoire(NBR_FORMATIONS);
     float meilleureFitness = 999999.0;
     float fitness;
     int meilleurVoisin1 = -1;
@@ -134,16 +132,17 @@ bool RechercheTabou::voisinage(int& id1, int& id2) {
     //pour chaque attribution
     for (int i = 0; i < NBR_FORMATION; i++)
     {
+        //pour chaque attribution
         for (int j = 0; j < NBR_FORMATION; j++)
         {
-            //si elles sont inversibles
             if(j != i && this->estInversible(i, j)) {
-                //on regarde si l'inversion est meilleures que les précédentes
+                //si elles sont inversibles
                 this->inverser(i, j);
                 fitness = this->m_fitnessActuelle;
                 this->evaluerSolutionActuelle();
-                //si oui on la marque comme meilleure inversion
+                //on regarde si l'inversion est meilleures que les précédentes
                 if(this->m_fitnessActuelle < meilleureFitness) {
+                     //si oui on la marque comme meilleure inversion
                     meilleureFitness = fitness;
                     meilleurVoisin2 = j;
                     meilleurVoisin1 = i;
@@ -175,13 +174,10 @@ bool RechercheTabou::estInversible(int id1, int id2) {
     Interface* interface1 = this->getInterfaceById(this->m_solutionActuelle[id1]);
     Formation* formation2 = this->getFormationById(id2);
     Interface* interface2 = this->getInterfaceById(this->m_solutionActuelle[id2]);
-    //std::cout << formation1->getId() << " " << interface1->getId() << "/" << formation2->getId() << " " << interface2->getId();
     //si les interfaces n'ont pas les bonnes competances pour permutter
     if(!interface1->aCompetance(formation2->getCompetance()) || !interface2->aCompetance(formation1->getCompetance())) {
-        //std::cout << "faux" << std::endl;
         return false;
     }
-    //std::cout << std::endl;
 
     int duree1 = formation1->getHeureFin() - formation1->getHeureDebut();
     int duree2 = formation2->getHeureFin() - formation2->getHeureDebut();
@@ -399,12 +395,13 @@ void RechercheTabou::afficherMeilleurSolution() {
         std::cout << "formation  " << i << "-> interface " << this->m_meilleureSolution[i] << std::endl;
     }
     std::cout << "facteur de corrélation = " << this->m_facteurCorrelation << std::endl;
-    std::cout << "nombre de specialités respectées =  " << (NBR_FORMATIONS - this->m_penaliteSpecialiteMeilleureSolution);
+    std::cout << "nombre de spécialités respectées = " << (NBR_FORMATIONS - this->m_penaliteSpecialiteMeilleureSolution);
     std::cout << " soit " << (100*(NBR_FORMATIONS - this->m_penaliteSpecialiteMeilleureSolution))/NBR_FORMATIONS << "%" <<std::endl;
-    std::cout << "nombre de pauses 12h-14h non respectées =  " << this->m_penalitePauseMeilleureSolution << std::endl;
-    std::cout << "moyenne des déplacments = " << this->m_moyenneDeplacementMeilleureSolution << std::endl;
-    std::cout << "écart type des déplacments = " << this->m_ecartTypeDeplacmentMeilleureSolution << std::endl;
-    std::cout << "fitness =  " << this->m_meilleureFitness << std::endl;
+    std::cout << "nombre de pauses 12h-14h respectées = " << (NBR_FORMATIONS - this->m_penalitePauseMeilleureSolution);
+    std::cout << " soit " << (100*(NBR_FORMATIONS - this->m_penalitePauseMeilleureSolution))/NBR_FORMATIONS << "%" <<std::endl;
+    std::cout << "moyenne des déplacements = " << this->m_moyenneDeplacementMeilleureSolution << std::endl;
+    std::cout << "écart type des déplacements = " << this->m_ecartTypeDeplacmentMeilleureSolution << std::endl;
+    std::cout << "fitness = " << this->m_meilleureFitness << std::endl;
 }
 
 /**
@@ -425,7 +422,6 @@ void RechercheTabou::evaluerSolutionActuelle() {
         interface = this->getInterfaceById(this->m_solutionActuelle[formation->getId()]);
         // on ajoute la distance entre le dernier centre et l'actuel
         distancesInterface[interface->getId()] += getDistanceEntreCentres(dernierCentre[interface->getId()][formation->getJour()], formation->getCentre());
-        //std::cout << "interface" << interface->getId() << ": j"<< formation->getJour() << " de " << dernierCentre[interface->getId()][formation->getJour()] << " à " << formation->getCentre() << " -> +" << getDistanceEntreCentres(dernierCentre[interface->getId()][formation->getJour()], formation->getCentre()) << std::endl;
         //mise à jour du dernier centre visité
         dernierCentre[interface->getId()][formation->getJour()] = formation->getCentre();
         //si c'est la dernière formation pour l'interface
@@ -433,7 +429,6 @@ void RechercheTabou::evaluerSolutionActuelle() {
         if(interface->estDerniereDeLaJournee(formation->getJour(), formation->getHeureFin())) {
             //on ajoute la distance entre le dernier centre et le centre SESSAD
             distancesInterface[interface->getId()] += getDistanceEntreCentres(formation->getCentre(), 0);
-            //std::cout << "interface" << interface->getId() << ": j"<< formation->getJour() << " de " << dernierCentre[interface->getId()][formation->getJour()] << " à " << 0 << " -> +" << getDistanceEntreCentres(dernierCentre[interface->getId()][formation->getJour()], 0) << std::endl;
             dernierCentre[interface->getId()][formation->getJour()] = 0;
         }
         //si l'interface n'a pas la bonne spécialité
