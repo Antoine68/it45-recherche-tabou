@@ -61,45 +61,52 @@ void RechercheTabou::rechercher() {
 
        fitnessApres = this->m_fitnessActuelle;
        
-       nbIterationsSansAmelioration++;
-       nbIterationDiversiteActuelle++;
-
+       
        if(this->m_meilleureFitness > this->m_fitnessActuelle) {
            this->nouvelleMeilleureSolution();
            nbIterationsSansAmelioration = 0;
            nbIterationMeilleure = nbIterationDiversiteActuelle;
-           //std::cout << "-> iter: " << this->m_iterationActuelle << ": " << this->m_meilleureFitness << std::endl;
+           //std::cout << "-> iter: " << nbIterationDiversiteActuelle << ": " << nbIterationMeilleure << std::endl;
        } else  {
             // Critères de détection d'un minimum local. 2 cas:
             //  1. si la nouvelle solution est + mauvaise que l'ancienne
             //         et que on est en train d'effectuer une descente
             //  2. si la nouvelle solution est identique à l'ancienne
             //         et que c'est la première fois que cela se produit
-           if(((fitnessAvant < fitnessApres) && descente) || ((fitnessAvant == fitnessApres)&&(first))) {
+            if(((fitnessAvant < fitnessApres) && descente) || ((fitnessAvant == fitnessApres)&&(first))) {
                 //std::cout << "minimum local-> iter: " << this->m_iterationActuelle-1 << ": " << fitnessAvant << std::endl;
-           }
-           if (fitnessAvant<=fitnessApres)  // la solution courente se dégrade
-	            descente = false;
-	        else
+            }
+            if (fitnessAvant<=fitnessApres) {
+                descente = false; // la solution courente se dégrade
+            } else {
 	            descente = true;   // la solution courante s'améliore : descente
-            if ((fitnessAvant!=fitnessApres)&&(!first)) //
+            }
+            if ((fitnessAvant!=fitnessApres)&&(!first)) {//
                 first = true;
+            }
+
+            // le comptage pour la diversification ne commence que si on
+            // a dépassé le nombre d'itération de la meilleure diversité 
+            if (nbIterationDiversiteActuelle >= nbIterationMeilleure)
+            {
+                nbIterationsSansAmelioration++;
+            }
+            
        }
        fitnessAvant = fitnessApres;
        //std::cout << "iter: " << this->m_iterationActuelle << "  " << this->m_fitnessActuelle <<"  " << this->m_meilleureFitness << std::endl;
 
 
-       //on diversifie quand :
-       // - on a atteint le même nombre d'itération pour cette diversification
-       //   que pour la meilleure + le nombre d'itération choisit en paramètre.
-       //cela permet de plus explorer une diversification car au début on est certain d'avoir une mauvaise fitness
-       if (nbIterationsSansAmelioration >= this->m_nbIterationAvantDiversification && nbIterationDiversiteActuelle >= nbIterationMeilleure)
+       //on diversifie si on atteint le nombre d'itération max sans amélioration
+       if (nbIterationsSansAmelioration >= this->m_nbIterationAvantDiversification)
        {
            //std::cout << "diversification à " << this->m_iterationActuelle << std::endl;
            nbIterationsSansAmelioration = 0;
            nbIterationDiversiteActuelle = 0;
            this->firstFit();
        }
+       
+       nbIterationDiversiteActuelle++;
        this->m_iterationActuelle++;
         
 
