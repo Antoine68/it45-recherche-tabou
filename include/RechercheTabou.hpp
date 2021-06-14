@@ -10,6 +10,7 @@
 #include <cmath> 
 #include <time.h>
 #include <pthread.h>
+#include <atomic>
 #include "Formation.hpp"
 #include "Interface.hpp"
 #include "Centre.hpp"
@@ -49,7 +50,7 @@ class RechercheTabou
        int m_iterationActuelle;
        float m_distances[NBR_CENTRES_FORMATION+1][NBR_CENTRES_FORMATION+1];
        float m_facteurCorrelation;
-       bool m_boucler;
+       std::atomic<bool> m_boucler; //atomic car modifié par deux threads différents
 
        int m_meilleureSolution[NBR_FORMATIONS] = {-1};
        int m_penaliteSpecialiteMeilleureSolution;
