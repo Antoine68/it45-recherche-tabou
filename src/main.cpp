@@ -86,10 +86,10 @@ int main(int argc, char **argv)
     }
 
     //parametre durée tabou
-    int dureeTabou = 15;
+    int dureeTabou = NBR_FORMATIONS/5;
 
     //paramètre iteration avant diversification
-    int iterationAvantDiversification =  250;
+    int iterationAvantDiversification =  250 + (500/temps);
 
     //création recherche tabou
     RechercheTabou tabou(formations, interfaces, centres, dureeTabou, iterationAvantDiversification);
