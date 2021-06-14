@@ -467,7 +467,7 @@ void RechercheTabou::evaluerSolutionActuelle() {
  */
 float RechercheTabou::calculerMoyenne(float* donnees, int taille)
 {
-    int somme = 0, moyenne;
+    float somme = 0.0, moyenne;
 
     int i;
 
@@ -485,7 +485,7 @@ float RechercheTabou::calculerMoyenne(float* donnees, int taille)
  */
 float RechercheTabou::calculerEcartType(float* donnees, int taille)
 {
-    int moyenne, ecartType = 0.0;
+    float moyenne, ecartType = 0.0;
 
     moyenne = calculerMoyenne(donnees, taille);
 
